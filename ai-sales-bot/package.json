@@ -1,0 +1,28 @@
+{
+  "name": "ai-sales-bot",
+  "version": "1.0.0",
+  "description": "Zero-Cost 24/7 AI Sales Bot for Clothing & Electronics Instagram DM Commerce",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [
+    "ai",
+    "ecommerce",
+    "instagram-bot",
+    "gemini",
+    "sales-agent"
+  ],
+  "author": "Antigravity",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.20.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.3",
+    "googleapis": "^186.0.0",
+    "nodemailer": "^10.1.0",
+    "pg": "^8.23.1"
+  }
+}

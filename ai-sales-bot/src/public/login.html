@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Login - AI Sales Bot Studio</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0b0f17;color:#e5e7eb;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .card{width:100%;max-width:400px;margin:1rem;background:#121824;border:1px solid #1f2937;border-radius:16px;padding:1.75rem}
+  h1{margin:0 0 .25rem;font-size:1.35rem}
+  p.sub{margin:0 0 1.25rem;color:#94a3b8;font-size:.9rem}
+  .tabs{display:flex;gap:.5rem;margin-bottom:1.25rem}
+  .tab{flex:1;padding:.6rem;border-radius:10px;border:1px solid #1f2937;background:transparent;color:#94a3b8;cursor:pointer;font-weight:600}
+  .tab.active{background:#8b5cf6;color:#fff;border-color:#8b5cf6}
+  label{display:block;font-size:.8rem;color:#94a3b8;margin:.75rem 0 .3rem}
+  input{width:100%;padding:.7rem .8rem;border-radius:10px;border:1px solid #1f2937;background:#0b0f17;color:#fff;font-size:.95rem}
+  input:focus{outline:2px solid #8b5cf6;border-color:transparent}
+  button.go{width:100%;margin-top:1.25rem;padding:.8rem;border:0;border-radius:10px;background:linear-gradient(90deg,#f59e0b,#ec4899);color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
+  button.go:disabled{opacity:.6;cursor:wait}
+  #msg{margin-top:.9rem;font-size:.88rem;min-height:1.2rem;color:#f87171}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>AI Sales Bot Studio</h1>
+  <p class="sub">Instagram auto-replies for your business</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tabLogin" type="button">Login</button>
+    <button class="tab" id="tabSignup" type="button">Sign up</button>
+  </div>
+
+  <div id="signupOnly" class="hide">
+    <label for="business">Business name</label>
+    <input id="business" placeholder="e.g. RFD Fashion" autocomplete="organization">
+  </div>
+
+  <label for="email">Email</label>
+  <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+
+  <label for="password">Password (min 8 characters)</label>
+  <input id="password" type="password" autocomplete="current-password">
+
+  <div id="inviteWrap" class="hide">
+    <label for="invite">Invite code (if you were given one)</label>
+    <input id="invite" placeholder="optional" autocomplete="off">
+  </div>
+
+  <button class="go" id="submit" type="button">Login</button>
+  <div id="msg"></div>
+</div>
+
+<script>
+  let mode = 'login';
+  const $ = id => document.getElementById(id);
+
+  function setMode(m) {
+    mode = m;
+    $('tabLogin').classList.toggle('active', m === 'login');
+    $('tabSignup').classList.toggle('active', m === 'signup');
+    $('signupOnly').classList.toggle('hide', m !== 'signup');
+    $('inviteWrap').classList.toggle('hide', m !== 'signup');
+    $('submit').textContent = m === 'login' ? 'Login' : 'Create account';
+    $('password').autocomplete = m === 'login' ? 'current-password' : 'new-password';
+    $('msg').textContent = '';
+  }
+
+  $('tabLogin').onclick = () => setMode('login');
+  $('tabSignup').onclick = () => setMode('signup');
+
+  async function submit() {
+    $('msg').textContent = '';
+    $('submit').disabled = true;
+
+    const body = { email: $('email').value, password: $('password').value };
+
+    if (mode === 'signup') {
+      body.businessName = $('business').value;
+      body.inviteCode = $('invite').value;
+    }
+
+    try {
+      const res = await fetch('/api/auth/' + mode, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        location.href = data.redirect || '/account.html';
+      } else {
+        $('msg').textContent = data.message || 'Something went wrong';
+      }
+    } catch (e) {
+      $('msg').textContent = 'Network error: ' + e.message;
+    } finally {
+      $('submit').disabled = false;
+    }
+  }
+
+  $('submit').onclick = submit;
+  document.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>24/7 AI Sales Bot Studio (Clothing & Electronics)</title>
+
+  <!-- PWA & Mobile App Settings -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0b0f17">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AI Sales Bot">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="/icons/icon.svg">
+
+  <link rel="stylesheet" href="css/style.css?v=3.3">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo-group">
+        <div class="logo-badge">
+          <i class="fab fa-instagram"></i>
+        </div>
+        <div>
+          <div class="logo-title">
+            AI Sales Bot Studio
+            <span class="zero-cost-tag"><i class="fas fa-bolt"></i> </span>
+          </div>
+          <p style="font-size: 0.72rem; color: var(--text-secondary);">Autonomous 24/7 Social Commerce & Instagram DM Sales Rep</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs & Phone Button -->
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <button class="btn btn-ig" onclick="openPhoneShareModal()" style="width: auto; padding: 0.45rem 0.9rem; font-size: 0.82rem;">
+          <i class="fas fa-mobile-screen"></i> Install / Show on Phone
+        </button>
+
+        <nav class="nav-tabs">
+          <button class="tab-btn active" data-tab="simulator">
+            <i class="fas fa-mobile-alt"></i> Live DM Simulator
+          </button>
+          <button class="tab-btn" data-tab="catalog">
+            <i class="fas fa-box-open"></i> Product Catalog
+          </button>
+          <button class="tab-btn" data-tab="crm">
+            <i class="fas fa-chart-line"></i> Leads CRM & Analytics
+          </button>
+          <button class="tab-btn" data-tab="orders" type="button">
+            <i class="fas fa-receipt"></i> Orders <span id="orders-tab-badge"></span>
+          </button>
+          <button class="tab-btn" data-tab="setup">
+            <i class="fas fa-cog"></i> Meta Live & Webhooks
+          </button>
+          <button class="tab-btn" data-tab="inbox" type="button">
+            <i class="fab fa-instagram"></i> Instagram Inbox
+          </button>
+          <!-- Beauty parlour appointments: js/salon.js shows this button only for admin / parlour owners -->
+          <button class="tab-btn" data-tab="salon" id="salon-tab-btn" type="button" style="display:none;">
+            <i class="fas fa-spa"></i> Parlour Appointments
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main>
+
+    <!-- ========================================== -->
+    <!-- TAB 1: LIVE INSTAGRAM DM SIMULATOR -->
+    <!-- ========================================== -->
+    <section id="tab-simulator" class="tab-content active">
+      <div class="simulator-layout">
+
+        <!-- Left Column: Store & Ad Selection Controls -->
+        <div class="glass-panel store-switch-card">
+          <div class="section-label"><i class="fas fa-store"></i> Active Store Industry</div>
+
+          <div class="store-radio-group">
+            <div class="store-option selected" data-store="clothing" onclick="selectStore('clothing')">
+              <div class="store-icon" style="background: rgba(236, 72, 153, 0.15); color: #f472b6;">
+                <i class="fas fa-tshirt"></i>
+              </div>
+              <div class="store-info">
+                <h4>AURA Streetwear (Fashion)</h4>
+                <p>Fit Guide, 480 GSM Cotton, Voice Notes</p>
+              </div>
+            </div>
+
+            <div class="store-option" data-store="electronics" onclick="selectStore('electronics')">
+              <div class="store-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">
+                <i class="fas fa-headphones-alt"></i>
+              </div>
+              <div class="store-info">
+                <h4>NEXUS Tech (Electronics)</h4>
+                <p>-42dB ANC, 42h Battery, Specs Matrix</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-label"><i class="fas fa-ad"></i> Instagram Ad Referrals</div>
+          <div class="ad-trigger-box">
+            <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Simulate customer tapping an Instagram Sponsored Ad (Click-to-DM):
+            </p>
+            <div id="ad-buttons-container" style="display: flex; flex-direction: column; gap: 0.5rem;">
+              <!-- Dynamic Ad Click buttons populated by JS -->
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top: 1.25rem;"><i class="fas fa-clock"></i> 24/7 Follow-Up Tester</div>
+          <div class="ad-trigger-box" style="background: rgba(139, 92, 246, 0.08); border-color: rgba(139, 92, 246, 0.25);">
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.6rem;">
+              Test automated abandoned cart recovery:
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+              <button class="btn btn-secondary" onclick="triggerManualFollowUp(1)" style="font-size: 0.75rem; padding: 0.4rem;">
+                <i class="fas fa-reply"></i> Send Stage 1 (+15m Fit Check)
+              </button>
+              <button class="btn btn-secondary" onclick="triggerManualFollowUp(2)" style="font-size: 0.75rem; padding: 0.4rem;">
+                <i class="fas fa-tag"></i> Send Stage 2 (+2h Flash Code)
+              </button>
+              <button class="btn btn-secondary" onclick="triggerManualFollowUp(3)" style="font-size: 0.75rem; padding: 0.4rem;">
+                <i class="fas fa-fire"></i> Send Stage 3 (+24h Stock Alert)
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="resetCurrentSession()" style="margin-top: 1rem;">
+            <i class="fas fa-rotate-left"></i> Reset Chat Session
+          </button>
+        </div>
+
+        <!-- Middle Column: Instagram DM Phone Mockup -->
+        <div>
+          <div class="phone-mockup">
+            <!-- Header -->
+            <div class="phone-header">
+              <div class="ig-profile">
+                <div class="ig-avatar">
+                  <img id="header-avatar" src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=100&fit=crop" alt="avatar">
+                </div>
+                <div class="ig-name-group">
+                  <h4 id="header-brand-name">AURA Streetwear <i class="fas fa-check-circle verified-icon"></i></h4>
+                  <p><i class="fas fa-robot"></i> 24/7 AI Sales Active</p>
+                </div>
+              </div>
+              <div style="color: #888; font-size: 1.1rem; display: flex; gap: 0.75rem;">
+                <i class="fas fa-phone"></i>
+                <i class="fas fa-video"></i>
+                <i class="fas fa-info-circle"></i>
+              </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div class="chat-messages" id="chat-messages-stream">
+              <!-- Dynamically populated messages -->
+            </div>
+
+            <!-- Quick Replies -->
+            <div class="quick-replies-tray" id="quick-replies-container">
+              <!-- Quick reply chips -->
+            </div>
+
+            <!-- Input Bar -->
+            <div class="phone-input-bar">
+              <input type="text" id="user-input-box" class="phone-input" placeholder="Message..." onkeypress="handleInputKey(event)">
+              <button class="phone-send-btn" onclick="sendUserMessage()">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Sales Agent Real-Time Inspector -->
+        <div class="glass-panel inspector-panel">
+          <div>
+            <div class="section-label"><i class="fas fa-brain"></i> Live Sales Psychology State</div>
+
+            <div class="funnel-step-bar">
+              <div class="funnel-node" id="funnel-HOOK">Hook</div>
+              <div class="funnel-node" id="funnel-QUALIFY">Qualify</div>
+              <div class="funnel-node" id="funnel-RECOMMEND">Pitch</div>
+              <div class="funnel-node" id="funnel-OBJECTION_HANDLING">Objection</div>
+              <div class="funnel-node" id="funnel-CLOSING">Closing</div>
+            </div>
+          </div>
+
+          <div style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-size: 0.78rem; color: var(--text-secondary);">Lead Intent Score:</span>
+              <span id="lead-intent-badge" class="intent-badge intent-HOT">HOT INTENT</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-size: 0.78rem; color: var(--text-secondary);">Active Promo Code:</span>
+              <span id="active-promo-badge" style="font-size: 0.8rem; font-weight: 700; color: #fbbf24;">FLASH15 (15% OFF)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 0.78rem; color: var(--text-secondary);">Estimated Order Value:</span>
+              <span id="lead-cart-value" style="font-size: 0.85rem; font-weight: 700; color: #34d399;">$54.99</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="section-label"><i class="fas fa-fingerprint"></i> AI Customer Profile Memory</div>
+            <div id="ai-attributes-box" style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 0.75rem; font-size: 0.75rem; color: #a5f3fc; border: 1px solid var(--border-color); min-height: 80px; font-family: monospace;">
+              { "fit_preference": "boxy oversized", "sizing": "Size L calculated" }
+            </div>
+          </div>
+
+          <div>
+            <div class="section-label"><i class="fas fa-shield-alt"></i> Live-Commerce Tactics Active</div>
+            <ul style="font-size: 0.75rem; color: var(--text-secondary); line-height: 1.5; padding-left: 1.2rem;">
+              <li><strong>Social Proof Ticker:</strong> Real-time buyer counters & live viewer count.</li>
+              <li><strong>Gamified Mystery Reveal:</strong> Interactive scratch card discounts.</li>
+              <li><strong>Audio / Video Snippets:</strong> Voice notes and product drape previews.</li>
+              <li><strong>Post-Purchase Reactivation:</strong> Automatic receipt & 20% cross-sell combo.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: PRODUCT CATALOG & SIZING/SPECS -->
+    <!-- ========================================== -->
+    <section id="tab-catalog" class="tab-content">
+      <div class="glass-panel" style="padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h2 style="font-size: 1.3rem;"><i class="fas fa-boxes"></i> Store Inventory & AI Sales Knowledge Base</h2>
+            <p style="font-size: 0.82rem; color: var(--text-secondary);">Add your own products with photos, or sync them from Instagram. Everything here appears in your WhatsApp catalogue automatically.</p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <select id="catalog-store-filter" class="phone-input" style="width: 180px; border: 1px solid var(--border-color);" onchange="filterCatalog()">
+              <option value="clothing">👗 Clothing Store</option>
+              <option value="electronics">⚡ Electronics Store</option>
+            </select>
+            <button class="btn btn-primary" onclick="openProductForm()" style="width: auto;">
+              <i class="fas fa-plus"></i> Add Product
+            </button>
+            <!-- "Sync Instagram" and refresh buttons are added automatically by catalog.js -->
+
+          </div>
+        </div>
+
+        <div class="crm-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Sizes / Specs</th>
+                <th>Ad Triggers</th>
+                <th>Source</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="catalog-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Products added by hand (not from Instagram) -->
+      <div class="glass-panel" style="padding: 1.5rem; margin-top: 1.5rem;">
+        <div style="margin-bottom: 1rem;">
+          <h3 style="font-size: 1.15rem;"><i class="fab fa-whatsapp" style="color: #34d399;"></i> My Products (added manually)</h3>
+          <p style="font-size: 0.8rem; color: var(--text-secondary);">
+            These show in your WhatsApp catalogue as photo cards with an <strong>Add to cart</strong> button. Use <strong>Copy link</strong> to share a product in your bio, stories or status.
+          </p>
+        </div>
+
+        <div class="crm-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Sizes / Colors</th>
+                <th>WhatsApp Link</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="mp-table-body">
+              <tr><td colspan="6" style="text-align:center;color:#888;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 3: LEADS CRM & CONVERSION PIPELINE -->
+    <!-- ========================================== -->
+    <section id="tab-crm" class="tab-content">
+      <!-- High Level Metrics -->
+      <div class="stats-grid">
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">
+            <i class="fab fa-instagram"></i>
+          </div>
+          <div>
+            <div class="stat-label">Total DM Conversations</div>
+            <div class="stat-value" id="stat-conversations">12</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(239, 68, 68, 0.15); color: #f87171;">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div>
+            <div class="stat-label">Hot Leads Captured</div>
+            <div class="stat-value" id="stat-hot-leads">8</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <i class="fas fa-shopping-cart"></i>
+          </div>
+          <div>
+            <div class="stat-label">Converted / Purchased</div>
+            <div class="stat-value" id="stat-converted">4</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+            <i class="fas fa-dollar-sign"></i>
+          </div>
+          <div>
+            <div class="stat-label">Pipeline Value Generated</div>
+            <div class="stat-value" id="stat-revenue">$258.98</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRM Table -->
+      <div class="glass-panel" style="padding: 1.5rem;">
+        <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;"><i class="fas fa-address-book"></i> Instagram DM Leads & Pipeline</h3>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1rem;">Live leads captured, converted, and reactivated by the 24/7 AI Sales Bot.</p>
+
+        <div class="crm-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Store Type</th>
+                <th>Interested Product</th>
+                <th>Cart Value</th>
+                <th>Intent Score</th>
+                <th>Status</th>
+                <th>Captured At</th>
+              </tr>
+            </thead>
+            <tbody id="crm-leads-table-body">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- TAB 4: META LIVE INTEGRATION & SETUP GUIDE -->
+    <!-- ========================================== -->
+    <section id="tab-setup" class="tab-content">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+
+        <!-- Setup Guide Left -->
+        <div>
+          <!-- Live Meta Instagram & WhatsApp Connect Card -->
+          <div class="glass-panel guide-step" style="border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.06);">
+            <h3 style="color: #60a5fa;"><i class="fab fa-whatsapp" style="color: #34d399;"></i> Connect Instagram & WhatsApp Live</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Connect your real Instagram DM inbox or Meta WhatsApp Cloud API directly:
+            </p>
+
+            <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.75rem;">
+              <div>
+                <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">META ACCESS TOKEN (Instagram & WhatsApp):</label>
+                <input type="password" id="meta-token-input" class="phone-input" placeholder="EAA..." style="border: 1px solid var(--border-color);">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">WHATSAPP ACCESS TOKEN (Instagram & WhatsApp):</label>
+                <input type="password" id="whatsapp-token-input" class="phone-input" placeholder="EAA..." style="border: 1px solid var(--border-color);">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">WHATSAPP PHONE NUMBER ID (From Meta WhatsApp Dashboard):</label>
+                <input type="text" id="whatsapp-phone-input" class="phone-input" placeholder="e.g. 109876543210987" style="border: 1px solid var(--border-color);">
+              </div>
+              <div>
+                <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">WEBHOOK VERIFY TOKEN:</label>
+                <input type="text" id="meta-verify-input" class="phone-input" value="ai_sales_bot_secret_token_2026" style="border: 1px solid var(--border-color);">
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
+                <button class="btn btn-primary" onclick="saveMetaCredentials()" style="flex: 1;">
+                  <i class="fas fa-save"></i> Save Credentials
+                </button>
+                <button class="btn btn-secondary" onclick="testMetaConnectionLive()" style="flex: 1; border-color: #3b82f6; color: #60a5fa;">
+                  <i class="fas fa-stethoscope"></i> Test Token Live
+                </button>
+              </div>
+              <p id="meta-status-text" style="font-size: 0.72rem; color: #34d399; margin-top: 0.2rem;"></p>
+            </div>
+
+            <!-- Direct Live Message Tester -->
+            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 0.75rem;">
+              <label style="font-size: 0.72rem; color: #fbbf24; font-weight: 700; display: block; margin-bottom: 0.3rem;">
+                <i class="fas fa-paper-plane"></i> SEND LIVE TEST MESSAGE (VERIFY BACKEND):
+              </label>
+              <div style="display: flex; gap: 0.4rem; margin-bottom: 0.4rem;">
+                <select id="test-channel-select" class="phone-input" style="width: 110px; font-size: 0.75rem; border: 1px solid var(--border-color);">
+                  <option value="whatsapp">WhatsApp</option>
+                  <option value="instagram">Instagram</option>
+                </select>
+                <input type="text" id="test-recipient-input" class="phone-input" placeholder="Phone with country code (e.g. 919876543210)" style="font-size: 0.75rem; border: 1px solid var(--border-color);">
+              </div>
+              <div style="display: flex; gap: 0.4rem;">
+                <input type="text" id="test-msg-input" class="phone-input" value="Hi! Testing AI Sales Bot connection 🚀" style="font-size: 0.75rem; border: 1px solid var(--border-color);">
+                <button class="btn btn-primary" onclick="sendLiveTestMessage()" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
+                  Send Now
+                </button>
+              </div>
+              <p id="live-test-status" style="font-size: 0.72rem; margin-top: 0.3rem;"></p>
+            </div>
+          </div>
+
+          <!-- ============================================================ -->
+          <!-- START: CONNECT WHATSAPP BUSINESS (1-CLICK EMBEDDED SIGNUP)   -->
+          <!-- Used by js/whatsapp-connect.js. Keep every id="wa-..." as is. -->
+          <!-- ============================================================ -->
+          <div id="wa-connect-card" class="glass-panel guide-step" style="border-color: rgba(37, 211, 102, 0.45); background: rgba(37, 211, 102, 0.05);">
+            <h3 style="color: #34d399;"><i class="fab fa-whatsapp"></i> Connect WhatsApp Business (1-Click)</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Connect your business WhatsApp number so customers can browse products, order and chat with your bot right inside WhatsApp.
+            </p>
+
+            <div style="background: rgba(251, 191, 36, 0.08); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 10px; padding: 0.7rem 0.85rem; margin-bottom: 0.85rem; color: #fcd34d; font-size: 0.75rem; line-height: 1.6;">
+              <strong>Before you start:</strong><br>
+              1. The number must <strong>not be active</strong> in the normal WhatsApp or WhatsApp Business app. Delete that account first, or use a fresh SIM.<br>
+              2. Keep the phone with you: Meta sends an SMS or call code.<br>
+              3. Log in with the Facebook account that manages your business.
+            </div>
+
+            <div id="wa-connect-status" style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Checking status...</div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button id="wa-connect-btn" class="btn btn-primary" onclick="startWhatsAppSignup()" disabled style="width: auto; background: linear-gradient(135deg, #25d366, #128c7e);">
+                <i class="fab fa-whatsapp"></i> Connect WhatsApp
+              </button>
+              <button id="wa-health-btn" class="btn btn-secondary" onclick="waHealth()" style="width: auto;">
+                <i class="fas fa-stethoscope"></i> Check connection
+              </button>
+              <button id="wa-disconnect-btn" class="btn btn-secondary" onclick="disconnectWhatsApp()" style="width: auto; display: none; border-color: #ef4444; color: #f87171;">
+                <i class="fas fa-link-slash"></i> Disconnect
+              </button>
+            </div>
+
+            <p id="wa-connect-msg" style="font-size: 0.78rem; margin-top: 0.75rem; min-height: 1.1rem;"></p>
+            <pre id="wa-health-out" style="font-size: 0.74rem; color: #cbd5e1; white-space: pre-wrap; margin-top: 0.4rem;"></pre>
+
+            <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 0.75rem;">
+              <label style="font-size: 0.72rem; color: #fbbf24; font-weight: 700; display: block; margin-bottom: 0.3rem;">
+                <i class="fas fa-paper-plane"></i> SEND A TEST MESSAGE TO YOUR OWN PHONE:
+              </label>
+              <div style="display: flex; gap: 0.4rem;">
+                <input type="text" id="wa-test-to" class="phone-input" placeholder="919876543210 (country code + number)" style="font-size: 0.75rem; border: 1px solid var(--border-color);">
+                <button class="btn btn-primary" onclick="waTestSend()" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.75rem;">
+                  Send test
+                </button>
+              </div>
+            </div>
+          </div>
+          <!-- ============================================================ -->
+          <!-- END: CONNECT WHATSAPP BUSINESS                               -->
+          <!-- ============================================================ -->
+
+          <div class="glass-panel guide-step">
+            <h3><span class="step-num">1</span> 1-Click Free Public HTTPS Tunnel</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              Meta requires a public HTTPS webhook URL for Instagram & WhatsApp. Run in your terminal:
+            </p>
+            <pre>npx cloudflared tunnel --url http://localhost:3000</pre>
+            <p style="font-size: 0.78rem; color: #34d399;">
+              Copy the HTTPS URL (e.g. <code>https://your-tunnel.trycloudflare.com/webhook</code>).
+            </p>
+          </div>
+        </div>
+
+        <!-- Setup Guide Right -->
+        <div>
+          <div class="glass-panel guide-step">
+            <h3><span class="step-num">2</span> Google AI Studio Free Gemini API Key</h3>
+            <p style="font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              When logged in with <strong>jawalekar21@gmail.com</strong>:
+            </p>
+            <ol style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; padding-left: 1.2rem; margin-bottom: 0.75rem;">
+              <li>Go to <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color: #60a5fa; text-decoration: underline;">Google AI Studio API Keys</a>.</li>
+              <li>Click the blue <strong>"Create API Key"</strong> button (Select "Create in new project").</li>
+              <li>Copy the key (starts with <code>AIzaSy...</code>) and paste below ($0 cost, 0 credit card required):</li>
+            </ol>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="password" id="gemini-key-input" class="phone-input" placeholder="AIzaSy..." style="border: 1px solid var(--border-color);">
+              <button class="btn btn-primary" onclick="saveGeminiKey()" style="width: auto; padding: 0.5rem 1rem;">Save</button>
+            </div>
+            <p id="gemini-status-text" style="font-size: 0.72rem; color: #34d399; margin-top: 0.4rem;"></p>
+          </div>
+
+          <!-- Live Webhook Logs Inspector -->
+          <div class="glass-panel guide-step">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <h3><span class="step-num">3</span> Live Webhook Event Stream</h3>
+              <button class="btn btn-secondary" onclick="loadWebhookLogs()" style="width: auto; padding: 2px 8px; font-size: 0.72rem;">
+                <i class="fas fa-sync"></i> Refresh
+              </button>
+            </div>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              Real-time events passing between Meta and your backend:
+            </p>
+            <div id="webhook-logs-container" style="background: #080c14; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; max-height: 160px; overflow-y: auto; font-family: monospace; font-size: 0.72rem; color: #a5f3fc;">
+              <div>[Ready] Webhook server listening on /webhook...</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- INSTAGRAM INBOX -->
+    <!-- ========================================== -->
+    <section id="tab-inbox" class="tab-content">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <div>
+          <h2 style="margin:0;"><i class="fab fa-instagram"></i> Instagram Inbox</h2>
+          <p style="margin:6px 0 0; color:#94a3b8;">Comments and DMs from the same customer appear in one conversation.</p>
+        </div>
+
+        <button type="button" onclick="loadInstagramInbox()" style="padding:10px 16px; border:none; border-radius:8px; cursor:pointer;">
+          <i class="fas fa-sync"></i> Refresh
+        </button>
+      </div>
+
+      <div id="instagram-inbox" style="display:grid; grid-template-columns:360px 1fr; min-height:600px; border:1px solid #273244; border-radius:14px; overflow:hidden; background:#0f172a;">
+
+        <!-- LEFT: CONVERSATIONS -->
+        <div style="border-right:1px solid #273244; overflow-y:auto;">
+          <div style="padding:16px; border-bottom:1px solid #273244; font-weight:700;">
+            Conversations
+            <span id="instagram-inbox-count" style="color:#94a3b8; font-weight:400;">0</span>
+          </div>
+
+          <div id="instagram-inbox-list">
+            <div style="padding:30px; text-align:center; color:#94a3b8;">Loading...</div>
+          </div>
+        </div>
+
+        <!-- RIGHT: MESSAGE THREAD -->
+        <div style="display:flex; flex-direction:column; min-width:0;">
+          <div id="instagram-inbox-header" style="padding:18px; border-bottom:1px solid #273244;">
+            <div id="instagram-inbox-customer" style="font-size:18px; font-weight:700;">Select a conversation</div>
+            <div id="instagram-inbox-meta" style="margin-top:5px; color:#94a3b8; font-size:13px;">Instagram</div>
+          </div>
+
+          <div id="instagram-inbox-messages" style="flex:1; overflow-y:auto; padding:20px;">
+            <div style="text-align:center; color:#64748b; padding-top:100px;">Select a customer to view messages.</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- ORDERS TAB -->
+    <!-- ========================================== -->
+    <section id="tab-orders" class="tab-content">
+
+      <div
+        id="orders-banner"
+        onclick="ordDismissBanner()"
+        style="display:none; cursor:pointer; margin-bottom:1rem; padding:0.8rem 1rem; border-radius:10px; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.5); color:#34d399; font-weight:700;"
+      ></div>
+
+      <div class="stats-grid">
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">
+            <i class="fas fa-receipt"></i>
+          </div>
+          <div>
+            <div class="stat-label">Total Orders</div>
+            <div class="stat-value" id="ord-stat-total">0</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+            <i class="fas fa-hourglass-half"></i>
+          </div>
+          <div>
+            <div class="stat-label">Waiting For Action</div>
+            <div class="stat-value" id="ord-stat-waiting">0</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">
+            <i class="fas fa-truck"></i>
+          </div>
+          <div>
+            <div class="stat-label">Delivered</div>
+            <div class="stat-value" id="ord-stat-delivered">0</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa;">
+            <i class="fas fa-indian-rupee-sign"></i>
+          </div>
+          <div>
+            <div class="stat-label">Order Value</div>
+            <div class="stat-value" id="ord-stat-revenue">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-bottom:0.75rem;">
+          <div>
+            <h3 style="font-size:1.15rem;"><i class="fas fa-receipt"></i> WhatsApp Orders</h3>
+            <p style="font-size:0.8rem; color:var(--text-secondary);">
+              Orders placed by customers in WhatsApp. Change the status to update the customer automatically.
+            </p>
+          </div>
+
+          <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+            <select id="orders-store-filter" class="phone-input" style="width:180px; border:1px solid var(--border-color);" onchange="ordersStoreChanged()">
+              <option value="clothing">👗 Clothing Store</option>
+              <option value="electronics">⚡ Electronics Store</option>
+            </select>
+
+            <label style="font-size:0.78rem; color:var(--text-secondary); display:flex; align-items:center; gap:0.3rem;">
+              <input type="checkbox" id="orders-notify-customer" checked>
+              Message customer on status change
+            </label>
+
+            <button class="btn btn-secondary" onclick="loadOrders()" style="width:auto;">
+              <i class="fas fa-sync"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <p id="orders-msg" style="font-size:0.78rem; margin-bottom:0.75rem;"></p>
+
+        <div class="crm-table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Customer</th>
+                <th>Items / Address</th>
+                <th>Total</th>
+                <th>Payment</th>
+                <th>Status</th>
+                <th>Update</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <tr><td colspan="7" style="text-align:center;color:#888;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================== -->
+    <!-- BEAUTY PARLOUR (drawn by js/salon.js) -->
+    <!-- ========================================== -->
+    <section id="tab-salon" class="tab-content"></section>
+
+  </main>
+
+  <!-- ========================================== -->
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <!-- ========================================== -->
+  <div id="product-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;">
+    <div class="glass-panel" style="max-width: 560px; width: 100%; padding: 1.75rem; position: relative; max-height: 92vh; overflow-y: auto;">
+      <button onclick="closeProductForm()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; color: #888; font-size: 1.25rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <h2 id="pf-title" style="font-size: 1.2rem; margin-bottom: 1rem;">Add product</h2>
+
+      <div style="display: flex; flex-direction: column; gap: 0.7rem;">
+
+        <div>
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">PRODUCT PHOTO (JPG or PNG):</label>
+          <input type="file" id="pf-image" accept="image/png,image/jpeg,image/webp" onchange="onProductImagePicked(this)" class="phone-input" style="border: 1px solid var(--border-color);">
+          <img id="pf-preview" alt="Preview" style="display: none; margin-top: 0.5rem; max-width: 160px; max-height: 160px; border-radius: 10px; object-fit: cover;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">PRODUCT NAME *</label>
+          <input type="text" id="pf-name" class="phone-input" placeholder="e.g. Cotton Kurta Set" maxlength="120" style="border: 1px solid var(--border-color);">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+          <div>
+            <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">PRICE (₹) *</label>
+            <input type="number" id="pf-price" class="phone-input" placeholder="999" min="0" style="border: 1px solid var(--border-color);">
+          </div>
+          <div>
+            <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">OLD PRICE (₹) - optional</label>
+            <input type="number" id="pf-original" class="phone-input" placeholder="1499" min="0" style="border: 1px solid var(--border-color);">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+          <div>
+            <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">CATEGORY</label>
+            <input type="text" id="pf-category" class="phone-input" placeholder="e.g. Kurtas" maxlength="60" style="border: 1px solid var(--border-color);">
+          </div>
+          <div>
+            <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">STOCK - leave empty if not tracked</label>
+            <input type="number" id="pf-stock" class="phone-input" placeholder="20" min="0" style="border: 1px solid var(--border-color);">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">SIZES (comma separated)</label>
+          <input type="text" id="pf-sizes" class="phone-input" placeholder="S, M, L, XL" style="border: 1px solid var(--border-color);">
+        </div>
+
+        <div>
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">COLORS (comma separated)</label>
+          <input type="text" id="pf-colors" class="phone-input" placeholder="black, white, navy" style="border: 1px solid var(--border-color);">
+        </div>
+
+        <div>
+          <label style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700;">DESCRIPTION (shown on the card, used by the AI)</label>
+          <textarea id="pf-desc" class="phone-input" rows="3" maxlength="500" placeholder="Soft cotton, regular fit, machine washable." style="border: 1px solid var(--border-color); resize: vertical;"></textarea>
+        </div>
+
+        <p id="pf-msg" style="font-size: 0.78rem; min-height: 1rem;"></p>
+
+        <button id="pf-save" class="btn btn-primary" onclick="saveProductForm()">
+          <i class="fas fa-save"></i> Save product
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- 1-CLICK FAST CHECKOUT SIMULATOR MODAL -->
+  <!-- ========================================== -->
+  <div id="checkout-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="glass-panel" style="max-width: 440px; width: 100%; padding: 1.75rem; position: relative; border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 40px rgba(16, 185, 129, 0.25);">
+      <button onclick="closeCheckoutModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; color: #888; font-size: 1.25rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div style="text-align: center; margin-bottom: 1.25rem;">
+        <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); display: inline-flex; align-items: center; justify-content: center; font-size: 1.4rem; color: white; margin-bottom: 0.5rem;">
+          <i class="fas fa-lock"></i>
+        </div>
+        <h2 style="font-size: 1.2rem;">1-Click Fast Checkout</h2>
+        <p style="font-size: 0.78rem; color: var(--text-secondary);">Direct Social Commerce Checkout Portal</p>
+      </div>
+
+      <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 0.85rem; border: 1px solid var(--border-color); margin-bottom: 1rem;">
+        <div style="display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 0.4rem;">
+          <span id="chk-item-name" style="font-weight: 600; color: #fff;">CyberPunk Heavyweight Hoodie</span>
+          <strong id="chk-item-price" style="color: #34d399;">$54.99</strong>
+        </div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: #94a3b8; margin-bottom: 0.4rem;">
+          <span>Express Delivery (24-48h):</span>
+          <span style="color: #34d399; font-weight: 600;">FREE</span>
+        </div>
+        <div style="border-top: 1px solid var(--border-color); padding-top: 0.4rem; display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700;">
+          <span>Total:</span>
+          <span id="chk-item-total" style="color: #34d399;">$54.99</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="completeSimulatedPayment()" style="background: linear-gradient(135deg, #10b981, #059669); font-size: 0.9rem; padding: 0.75rem;">
+        <i class="fas fa-check-circle"></i> Complete Order & Trigger Post-Purchase
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MOBILE INSTALL & CLIENT QR CODE MODAL -->
+  <!-- ========================================== -->
+  <div id="phone-modal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+    <div class="glass-panel" style="max-width: 520px; width: 100%; padding: 2rem; position: relative; border-color: rgba(139, 92, 246, 0.4); box-shadow: 0 0 40px rgba(139, 92, 246, 0.3);">
+      <button onclick="closePhoneShareModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; background: none; border: none; color: #888; font-size: 1.25rem; cursor: pointer;">
+        <i class="fas fa-times"></i>
+      </button>
+
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <div style="width: 54px; height: 54px; border-radius: 14px; background: var(--ig-gradient); display: inline-flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white; margin-bottom: 0.75rem;">
+          <i class="fas fa-mobile-screen"></i>
+        </div>
+        <h2 style="font-size: 1.3rem;">Open & Install on Client's Phone</h2>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.3rem;">Scan this QR code with any iPhone or Android camera to run it as a native standalone app!</p>
+      </div>
+
+      <div style="background: white; padding: 1rem; border-radius: 16px; width: 190px; height: 190px; margin: 0 auto 1.5rem auto; display: flex; align-items: center; justify-content: center;" id="qrcode-container">
+      </div>
+
+      <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 0.85rem; border: 1px solid var(--border-color); margin-bottom: 1.25rem;">
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 0.3rem;">DIRECT PHONE URL:</div>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="text" id="phone-url-input" readonly class="phone-input" style="font-size: 0.8rem; background: #000; border: 1px solid #333;" value="http://localhost:3000">
+          <button class="btn btn-secondary" onclick="copyPhoneUrl()" style="width: auto; padding: 0.5rem 0.8rem; font-size: 0.75rem;">Copy</button>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.75rem;">
+        <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color);">
+          <strong style="color: #60a5fa;"><i class="fab fa-apple"></i> iPhone / iPad:</strong>
+          <p style="color: var(--text-secondary); margin-top: 0.25rem;">Open in Safari &rarr; Tap <i class="fas fa-share-square"></i> <strong>Share</strong> &rarr; Tap <strong>"Add to Home Screen"</strong>.</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color);">
+          <strong style="color: #34d399;"><i class="fab fa-android"></i> Android:</strong>
+          <p style="color: var(--text-secondary); margin-top: 0.25rem;">Open in Chrome &rarr; Tap <i class="fas fa-ellipsis-v"></i> <strong>Menu</strong> &rarr; Tap <strong>"Install app"</strong>.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Scripts with Version Busters -->
+  <script src="js/simulator.js?v=3.3"></script>
+  <script src="js/catalog.js?v=3.3"></script>
+  <script src="js/analytics.js?v=3.3"></script>
+  <script src="js/products.js?v=3.3"></script>
+  <script src="js/orders.js?v=3.3"></script>
+  <script src="js/salon.js?v=1.0"></script>
+  <!-- 1-click WhatsApp connect (Embedded Signup) + health check + test message -->
+  <script src="js/whatsappConnect.js?v=3.4"></script>
+
+  <!-- Clear Old Cache & Register Updated Service Worker -->
+  <script>
+    if ('caches' in window) {
+      caches.keys().then(names => {
+        names.forEach(name => {
+          if (name !== 'ai-sales-bot-v3-live') caches.delete(name);
+        });
+      });
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js?v=3.3')
+          .then(reg => {
+            console.log('[PWA] Service Worker registered:', reg.scope);
+            reg.update();
+          })
+          .catch(err => console.log('[PWA] Service Worker error:', err));
+      });
+    }
+
+    let qrCodeInstance = null;
+
+    async function openPhoneShareModal() {
+      const modal = document.getElementById('phone-modal');
+      modal.style.display = 'flex';
+
+      let targetUrl = window.location.origin;
+
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        try {
+          const res = await fetch('/api/simulator/network-info');
+          const net = await res.json();
+          if (net.success && net.localUrl) {
+            targetUrl = net.localUrl;
+          }
+        } catch (e) {}
+      }
+
+      document.getElementById('phone-url-input').value = targetUrl;
+
+      const container = document.getElementById('qrcode-container');
+      container.innerHTML = '';
+      qrCodeInstance = new QRCode(container, {
+        text: targetUrl,
+        width: 160,
+        height: 160,
+        colorDark: "#0b0f17",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function closePhoneShareModal() {
+      document.getElementById('phone-modal').style.display = 'none';
+    }
+
+    function copyPhoneUrl() {
+      const input = document.getElementById('phone-url-input');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      alert('URL copied to clipboard! Send this link to your client or open on your phone.');
+    }
+
+
+    /* ============================================================
+       INSTAGRAM INBOX
+    ============================================================ */
+
+    let instagramInboxConversations = [];
+    let selectedInstagramConversationId = null;
+    let instagramInboxRefreshTimer = null;
+
+    function escapeInboxHtml(value) {
+      if (value === null || value === undefined) return '';
+
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function formatInboxTime(value) {
+      if (!value) return '';
+
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+
+      return date.toLocaleString(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    }
+
+    function getInboxIntentBadge(intent) {
+      const value = String(intent || 'WARM').toUpperCase();
+
+      let background = '#f59e0b';
+      if (value === 'HOT') background = '#ef4444';
+      if (value === 'COLD') background = '#64748b';
+
+      return `<span style="display:inline-block;padding:3px 7px;border-radius:999px;font-size:10px;font-weight:700;background:${background};color:white;">${escapeInboxHtml(value)}</span>`;
+    }
+
+    function getInboxSourceBadge(platform) {
+      const value = String(platform || '').toLowerCase();
+
+      if (value.includes('comment')) {
+        return '<span style="display:inline-block;padding:3px 7px;border-radius:999px;font-size:10px;background:#7c3aed;color:white;">COMMENT</span>';
+      }
+
+      if (value.includes('instagram')) {
+        return '<span style="display:inline-block;padding:3px 7px;border-radius:999px;font-size:10px;background:#db2777;color:white;">DM</span>';
+      }
+
+      return '';
+    }
+
+    function getConversationSessionId(conversation) {
+      return conversation?.session_id || conversation?.conversation_id || conversation?.id || '';
+    }
+
+    async function loadInstagramInbox() {
+      const list = document.getElementById('instagram-inbox-list');
+      if (!list) return;
+
+      try {
+        const response = await fetch('/api/leads/conversations');
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+
+        if (!data.success) throw new Error(data.message || 'Failed to load conversations');
+
+        instagramInboxConversations = Array.isArray(data.conversations)
+          ? data.conversations.filter(
+              conversation =>
+                String(conversation.platform || '').toLowerCase().includes('instagram') ||
+                conversation.instagram_user_id
+            )
+          : [];
+
+        const count = document.getElementById('instagram-inbox-count');
+        if (count) count.textContent = `(${instagramInboxConversations.length})`;
+
+        renderInstagramInbox();
+
+        // Keep the selected customer open after a refresh
+        if (selectedInstagramConversationId) {
+          const stillExists = instagramInboxConversations.some(
+            conversation => getConversationSessionId(conversation) === selectedInstagramConversationId
+          );
+
+          if (stillExists) await openInstagramConversation(selectedInstagramConversationId, false);
+        }
+      } catch (error) {
+        console.error('[Instagram Inbox] Load error:', error);
+
+        list.innerHTML = `
+          <div style="padding:30px;text-align:center;color:#ef4444;">
+            Failed to load inbox.<br>
+            <small>${escapeInboxHtml(error.message)}</small>
+          </div>`;
+      }
+    }
+
+    function renderInstagramInbox() {
+      const list = document.getElementById('instagram-inbox-list');
+      if (!list) return;
+
+      if (!instagramInboxConversations.length) {
+        list.innerHTML = `
+          <div style="padding:40px 20px;text-align:center;color:#64748b;">
+            <i class="fab fa-instagram" style="font-size:35px;margin-bottom:12px;"></i>
+            <div>No Instagram conversations yet.</div>
+            <small>New comments and DMs will appear here automatically.</small>
+          </div>`;
+        return;
+      }
+
+      list.innerHTML = instagramInboxConversations
+        .map(conversation => {
+          const sessionId = getConversationSessionId(conversation);
+          const customerName = conversation.customer_name || conversation.customer_handle || 'Instagram Customer';
+          const handle = conversation.customer_handle || '';
+          const intent = conversation.intent_score || 'WARM';
+          const time = formatInboxTime(conversation.last_message_at);
+          const selected = sessionId === selectedInstagramConversationId;
+
+          return `
+            <button
+              type="button"
+              onclick="openInstagramConversation('${escapeInboxHtml(sessionId)}')"
+              style="width:100%;border:none;border-bottom:1px solid #273244;text-align:left;padding:16px;cursor:pointer;background:${selected ? '#1e293b' : 'transparent'};color:inherit;"
+            >
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+                <div style="min-width:0;flex:1;">
+                  <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeInboxHtml(customerName)}</div>
+                  <div style="margin-top:4px;color:#94a3b8;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeInboxHtml(handle)}</div>
+                </div>
+                <div style="color:#64748b;font-size:11px;white-space:nowrap;">${escapeInboxHtml(time)}</div>
+              </div>
+
+              <div style="margin-top:9px;display:flex;gap:6px;align-items:center;">
+                ${getInboxIntentBadge(intent)}
+                ${getInboxSourceBadge(conversation.platform)}
+              </div>
+            </button>`;
+        })
+        .join('');
+    }
+
+    async function openInstagramConversation(sessionId, scrollToBottom = true) {
+      if (!sessionId) return;
+
+      selectedInstagramConversationId = sessionId;
+
+      renderInstagramInbox();
+
+      const conversation = instagramInboxConversations.find(item => getConversationSessionId(item) === sessionId);
+
+      const customerElement = document.getElementById('instagram-inbox-customer');
+      const metaElement = document.getElementById('instagram-inbox-meta');
+      const messagesElement = document.getElementById('instagram-inbox-messages');
+
+      if (!messagesElement) return;
+
+      if (customerElement) {
+        customerElement.textContent = conversation?.customer_name || conversation?.customer_handle || 'Instagram Customer';
+      }
+
+      if (metaElement) {
+        metaElement.innerHTML =
+          'Instagram' +
+          (conversation?.customer_handle ? ` · ${escapeInboxHtml(conversation.customer_handle)}` : '') +
+          (conversation?.intent_score ? ` · ${getInboxIntentBadge(conversation.intent_score)}` : '');
+      }
+
+      messagesElement.innerHTML = `
+        <div style="text-align:center;padding:60px;color:#64748b;">
+          <i class="fas fa-spinner fa-spin"></i> Loading messages...
+        </div>`;
+
+      try {
+        const response = await fetch(`/api/leads/conversations/${encodeURIComponent(sessionId)}/messages`);
+
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+
+        if (!data.success) throw new Error(data.message || 'Failed to load messages');
+
+        renderInstagramMessages(data.messages || []);
+
+        if (scrollToBottom) {
+          setTimeout(() => {
+            messagesElement.scrollTop = messagesElement.scrollHeight;
+          }, 50);
+        }
+      } catch (error) {
+        console.error('[Instagram Inbox] Message error:', error);
+
+        messagesElement.innerHTML = `
+          <div style="text-align:center;padding:60px;color:#ef4444;">
+            Failed to load messages.<br>
+            <small>${escapeInboxHtml(error.message)}</small>
+          </div>`;
+      }
+    }
+
+    function renderInstagramMessages(messages) {
+      const container = document.getElementById('instagram-inbox-messages');
+      if (!container) return;
+
+      if (!messages.length) {
+        container.innerHTML = '<div style="text-align:center;padding:80px 20px;color:#64748b;">No messages yet.</div>';
+        return;
+      }
+
+      const sortedMessages = [...messages].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+      container.innerHTML = sortedMessages
+        .map(message => {
+          const sender = String(message.sender || '').toLowerCase();
+          const isCustomer = sender === 'customer' || sender === 'user' || sender === 'inbound';
+          const platform = String(message.platform || '').toLowerCase();
+          const source = platform.includes('comment') ? 'COMMENT' : 'DM';
+
+          const bubbleBackground = isCustomer ? '#1e293b' : '#312e81';
+          const align = isCustomer ? 'flex-start' : 'flex-end';
+          const textAlign = isCustomer ? 'left' : 'right';
+          const label = isCustomer ? `Customer · ${source}` : 'AI Sales Bot';
+
+          return `
+            <div style="display:flex;justify-content:${align};margin-bottom:14px;">
+              <div style="max-width:75%;">
+                <div style="font-size:10px;color:#64748b;margin-bottom:4px;text-align:${textAlign};">${escapeInboxHtml(label)}</div>
+                <div style="background:${bubbleBackground};padding:11px 14px;border-radius:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;">${escapeInboxHtml(message.text || '')}</div>
+                <div style="margin-top:4px;font-size:10px;color:#64748b;text-align:${textAlign};">${escapeInboxHtml(formatInboxTime(message.timestamp))}</div>
+              </div>
+            </div>`;
+        })
+        .join('');
+    }
+
+    function startInstagramInboxAutoRefresh() {
+      if (instagramInboxRefreshTimer) clearInterval(instagramInboxRefreshTimer);
+
+      instagramInboxRefreshTimer = setInterval(() => {
+        const tab = document.getElementById('tab-inbox');
+
+        // Only refresh while the Inbox tab is actually visible
+        if (tab && tab.offsetParent !== null) loadInstagramInbox();
+      }, 5000);
+    }
+
+    function stopInstagramInboxAutoRefresh() {
+      if (instagramInboxRefreshTimer) {
+        clearInterval(instagramInboxRefreshTimer);
+        instagramInboxRefreshTimer = null;
+      }
+    }
+
+    startInstagramInboxAutoRefresh();
+  </script>
+</body>
+</html>

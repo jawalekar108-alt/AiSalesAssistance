@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parlour Onboarding</title>
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --line:#334155; --text:#e2e8f0; --muted:#94a3b8; --accent:#ec4899; --ok:#34d399; --bad:#f87171; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 1.3rem; margin: 8px 0 16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  .card h2 { margin:0 0 4px; font-size:1.05rem; }
+  .hint { color:var(--muted); font-size:.82rem; margin:0 0 12px; }
+  label { display:block; font-size:.78rem; color:var(--muted); margin:10px 0 4px; font-weight:600; }
+  input, textarea { width:100%; background:#0b1220; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:9px 10px; font:inherit; }
+  textarea { min-height: 150px; font-family: ui-monospace,Menlo,Consolas,monospace; font-size:.82rem; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+  .hours { display:grid; grid-template-columns: 90px 1fr 1fr; gap:8px; align-items:center; }
+  .hours span { color:var(--muted); font-size:.85rem; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:8px; padding:10px 16px; font:inherit; font-weight:700; cursor:pointer; margin-top:14px; }
+  button.secondary { background:#334155; }
+  .msg { margin-top:10px; font-size:.85rem; white-space:pre-wrap; word-break:break-word; }
+  .ok { color:var(--ok); } .bad { color:var(--bad); }
+  table { width:100%; border-collapse:collapse; font-size:.82rem; margin-top:10px; }
+  th, td { text-align:left; padding:6px 8px; border-bottom:1px solid var(--line); }
+  @media (max-width:600px){ .row{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>💅 Parlour Onboarding</h1>
+
+  <div class="card">
+    <h2>0. Admin key</h2>
+    <p class="hint">The value of SALON_ADMIN_KEY in your .env file.</p>
+    <input id="adminKey" type="password" placeholder="SALON_ADMIN_KEY" autocomplete="off">
+  </div>
+
+  <div class="card">
+    <h2>1. Create / update the parlour</h2>
+    <p class="hint">Saving again with the same Store ID updates it. Leave a day's times empty if closed.</p>
+
+    <div class="row">
+      <div><label>Store ID (letters, no spaces)</label><input id="store_id" placeholder="glow_parlour"></div>
+      <div><label>Parlour name</label><input id="name" placeholder="Glow Beauty Parlour"></div>
+    </div>
+    <div class="row">
+      <div><label>Owner WhatsApp (country code, digits only)</label><input id="owner_phone" placeholder="919876543210"></div>
+      <div><label>Google Calendar ID</label><input id="calendar_id" placeholder="abc123@group.calendar.google.com or owner@gmail.com"></div>
+    </div>
+    <label>Address</label><input id="address" placeholder="Shop 4, Main Road, Hyderabad">
+    <div class="row">
+      <div><label>Chairs / staff at the same time</label><input id="capacity" type="number" min="1" value="1"></div>
+      <div><label>Slot every (minutes)</label><input id="slot_minutes" type="number" min="10" value="30"></div>
+    </div>
+
+    <label>Opening hours (24h format, e.g. 10:00 and 20:00)</label>
+    <div id="hours"></div>
+
+    <label>Services &mdash; one per line: Category | Name | Price | Minutes | Description | tags</label>
+    <textarea id="services">Hair | Haircut (Women) | 400 | 45 | Wash, cut and blow-dry | hair cut style
+Hair | Hair Spa | 900 | 60 | Deep conditioning spa | hair spa relax
+Skin | Fruit Facial | 700 | 60 | Glow facial for all skin types | facial skin glow
+Skin | D-Tan Cleanup | 500 | 40 | Removes tan and dullness | skin detan cleanup glow
+Waxing | Full Arms Wax | 300 | 30 | Rica wax | wax removal
+Hands & Feet | Manicure + Pedicure | 800 | 75 | Spa manicure and pedicure | nail manicure pedicure hands
+Bridal | Bridal Makeup | 12000 | 120 | HD bridal makeup with hairstyle | bridal makeup wedding party</textarea>
+    <button onclick="saveStore()">Save parlour</button>
+    <div id="m1" class="msg"></div>
+  </div>
+
+  <div class="card">
+    <h2>2. Connect the parlour's WhatsApp number</h2>
+    <p class="hint">From Meta &rarr; WhatsApp &rarr; API Setup. The test number works before business verification.</p>
+    <div class="row">
+      <div><label>Store ID</label><input id="c_store_id" placeholder="glow_parlour"></div>
+      <div><label>Phone number ID</label><input id="phone_number_id"></div>
+    </div>
+    <div class="row">
+      <div><label>WhatsApp Business Account ID</label><input id="waba_id"></div>
+      <div><label>Display phone (optional)</label><input id="display_phone" placeholder="+1 555 123 4567"></div>
+    </div>
+    <label>Access token (use a permanent System User token)</label>
+    <input id="access_token" type="password" autocomplete="off">
+    <button onclick="connectWa()">Connect number</button>
+    <button class="secondary" onclick="checkWa()">Check connection</button>
+    <div id="m2" class="msg"></div>
+  </div>
+
+  <div class="card">
+    <h2>3. Holidays &amp; bookings</h2>
+    <div class="row">
+      <div><label>Store ID</label><input id="b_store_id" placeholder="glow_parlour"></div>
+      <div><label>Holiday date</label><input id="holiday" type="date"></div>
+    </div>
+    <button class="secondary" onclick="addHoliday()">Mark closed</button>
+    <button class="secondary" onclick="loadBookings()">Show latest bookings</button>
+    <div id="m3" class="msg"></div>
+    <div id="bookings"></div>
+  </div>
+</div>
+
+<script>
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const hoursBox = document.getElementById('hours');
+
+// Monday..Saturday 10-20, Sunday closed by default (weekday numbers: 0 = Sunday)
+[1,2,3,4,5,6,0].forEach(d => {
+  const on = d !== 0;
+  hoursBox.insertAdjacentHTML('beforeend',
+    `<div class="hours"><span>${DAY_NAMES[d]}</span>
+       <input id="o${d}" placeholder="open" value="${on ? '10:00' : ''}">
+       <input id="c${d}" placeholder="close" value="${on ? '20:00' : ''}"></div>`);
+});
+
+const val = id => document.getElementById(id).value.trim();
+
+function show(id, text, ok) {
+  const el = document.getElementById(id);
+  el.className = 'msg ' + (ok ? 'ok' : 'bad');
+  el.textContent = text;
+}
+
+try { document.getElementById('adminKey').value = sessionStorage.getItem('salonAdminKey') || ''; } catch (e) {}
+
+async function api(path, method, body) {
+  const key = val('adminKey');
+  try { sessionStorage.setItem('salonAdminKey', key); } catch (e) {}
+
+  const res = await fetch(path, {
+    method,
+    headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+    body: body ? JSON.stringify(body) : undefined
+  });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+  return data;
+}
+
+function parseServices() {
+  return val('services').split('\n').map(l => l.trim()).filter(Boolean).map((line, i) => {
+    const p = line.split('|').map(x => x.trim());
+    if (p.length < 3 || !p[1] || isNaN(Number(p[2]))) throw new Error(`Line ${i + 1}: needs at least Category | Name | Price`);
+    return { category: p[0] || 'General', name: p[1], price: Number(p[2]), duration_min: Number(p[3]) || 30, description: p[4] || '', tags: p[5] || '' };
+  });
+}
+
+async function saveStore() {
+  try {
+    const hours = {};
+    for (let d = 0; d < 7; d++) {
+      const o = val('o' + d), c = val('c' + d);
+      hours[d] = o && c ? [o, c] : null;
+    }
+
+    const store_id = val('store_id').toLowerCase().replace(/[^a-z0-9_-]/g, '');
+    if (!store_id) throw new Error('Store ID is required');
+
+    await api('/api/salon/admin/store', 'POST', {
+      store_id,
+      name: val('name'),
+      owner_phone: val('owner_phone').replace(/\D/g, ''),
+      calendar_id: val('calendar_id'),
+      address: val('address'),
+      capacity: Number(val('capacity')) || 1,
+      slot_minutes: Number(val('slot_minutes')) || 30,
+      hours,
+      services: parseServices()
+    });
+
+    document.getElementById('c_store_id').value = store_id;
+    document.getElementById('b_store_id').value = store_id;
+    show('m1', `Saved "${val('name')}" ✅  Now connect its WhatsApp number below.`, true);
+  } catch (e) { show('m1', e.message, false); }
+}
+
+async function connectWa() {
+  try {
+    const out = await api('/api/salon/admin/connect', 'POST', {
+      store_id: val('c_store_id'),
+      phone_number_id: val('phone_number_id'),
+      waba_id: val('waba_id'),
+      display_phone: val('display_phone'),
+      access_token: val('access_token')
+    });
+    show('m2', 'Connected ✅\nMeta subscribe result: ' + JSON.stringify(out.subscribe), true);
+  } catch (e) { show('m2', e.message, false); }
+}
+
+async function checkWa() {
+  try {
+    const out = await api('/api/salon/admin/health?store_id=' + encodeURIComponent(val('c_store_id')), 'GET');
+    show('m2', (out.all_ok ? 'ALL GOOD ✅\n' : 'PROBLEM ❌\n') + out.checks.map(c => `${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ' - ' + c.detail : ''}`).join('\n'), out.all_ok);
+  } catch (e) { show('m2', e.message, false); }
+}
+
+async function addHoliday() {
+  try {
+    await api('/api/salon/admin/holiday', 'POST', { store_id: val('b_store_id'), day: val('holiday') });
+    show('m3', 'Marked closed ✅', true);
+  } catch (e) { show('m3', e.message, false); }
+}
+
+async function loadBookings() {
+  try {
+    const rows = await api('/api/salon/admin/appointments?store_id=' + encodeURIComponent(val('b_store_id')), 'GET');
+    show('m3', `${rows.length} booking(s)`, true);
+    const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    document.getElementById('bookings').innerHTML = rows.length
+      ? '<table><tr><th>#</th><th>Customer</th><th>Service</th><th>When</th><th>Status</th></tr>' +
+        rows.map(r => `<tr><td>${r.id}</td><td>${esc(r.customer_name)}<br>${esc(r.customer_phone)}</td><td>${esc(r.service)}</td><td>${new Date(r.start_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })}</td><td>${esc(r.status)}</td></tr>`).join('') + '</table>'
+      : '';
+  } catch (e) { show('m3', e.message, false); }
+}
+</script>
+</body>
+</html>

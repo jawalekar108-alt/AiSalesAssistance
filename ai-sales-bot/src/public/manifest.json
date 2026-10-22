@@ -1,0 +1,24 @@
+{
+  "name": "AI Sales Bot Studio - 24/7 Social Commerce",
+  "short_name": "AI Sales Bot",
+  "description": "24/7 AI Sales Bot for Instagram Commerce (Clothing & Electronics)",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0b0f17",
+  "theme_color": "#8b5cf6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

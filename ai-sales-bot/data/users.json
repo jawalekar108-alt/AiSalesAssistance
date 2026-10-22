@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": "usr_d3dd6d12f450",
+      "email": "jawalekar108@gmail.com",
+      "password_hash": "scrypt$dec1e3e7792d962a26767a7d2654f19b$3edd87afdd02a4beb2a972ae60e1ef8fa0e1a73e196ef8ae487fde19e8f5cd8da5192097882c776d78f9126c6eb7057976a99b5dd755b1c1d64777f383b87cba",
+      "store_id": "clothing",
+      "role": "admin",
+      "created_at": "2026-10-06T09:54:04.612Z"
+    },
+    {
+      "id": "usr_ea86c62f94bf",
+      "email": "jawalekar21@gmail.com",
+      "password_hash": "scrypt$f621abe5d1263cbf1e292f771c5fc3af$70277fc2f7428d017d9ebc90734f609fbd02ad4aa723c9e677216751b6db2c3ee9a4cd150d05b7529640b7af4aa582eb2d89799eba020325c2559c217047ef90",
+      "store_id": "store_1791280729587_cjfc32",
+      "role": "owner",
+      "created_at": "2026-10-06T09:58:49.700Z"
+    },
+    {
+      "id": "usr_5bdc950e2e4e",
+      "email": "avinashai639@gmail.com",
+      "password_hash": "scrypt$f2ca25930bf3cfd13e9a7fb3314915e3$51681c78a2ccaa8d9c280abe84e7495f83bb0d04445de432bea566d529459f132709c45d8ec2ed398d950fc6be939a4acf3598d7b7c006ac209161c6e467fb9a",
+      "store_id": "store_1791880167698_7f6lcz",
+      "role": "owner",
+      "created_at": "2026-10-13T08:29:27.808Z"
+    },
+    {
+      "id": "usr_d21806ea557a",
+      "email": "avinashjawalekar309@gmail.com",
+      "password_hash": "scrypt$506d48297fefd4e4d4f19c894af83fd1$c9f5af3a56039329c0242eea1ff053a9e577d8ae42454391324af817e1bd88d99596fdff90c62c56acdbb83b057984656ba9d24754ca8983473578fa213fe413",
+      "store_id": "store_1792496192063_qs5oru",
+      "role": "owner",
+      "created_at": "2026-10-20T11:36:32.186Z"
+    }
+  ]
+}

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6efe4">
+<title>Salon Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: light;
+    --cream: #f6efe4;
+    --paper: #fffaf2;
+    --sand: #eadfce;
+    --sand-2: #dccdb6;
+    --latte: #c9a98a;
+    --mocha: #7a5a43;
+    --mocha-dark: #624632;
+    --espresso: #3a2c24;
+    --muted: #8a7766;
+    --rose: #c98f86;
+    --rose-soft: #f3dcd6;
+    --sage: #5f8265;
+    --sage-soft: #e0eadc;
+    --amber: #b9812a;
+    --amber-soft: #f6e8c9;
+    --danger: #b0483f;
+    --danger-soft: #f4d9d5;
+    --radius: 16px;
+    --shadow: 0 1px 2px rgba(58,44,36,.06), 0 8px 24px rgba(58,44,36,.06);
+    --serif: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    --sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--cream); color: var(--espresso); font: 15px/1.55 var(--sans); }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; margin: 0; letter-spacing: .2px; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: var(--mocha); }
+
+  /* ---------- header ---------- */
+  header { position: sticky; top: 0; z-index: 20; background: rgba(246,239,228,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--sand); }
+  .bar { max-width: 1120px; margin: 0 auto; padding: 12px 16px; display: flex; align-items: center; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .logo { width: 38px; height: 38px; border-radius: 12px; background: var(--mocha); color: var(--cream); display: grid; place-items: center; font-family: var(--serif); font-size: 22px; font-weight: 700; flex: none; }
+  .brand h1 { font-size: 22px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brand small { display: block; color: var(--muted); font-size: 12px; }
+  nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+  nav::-webkit-scrollbar { display: none; }
+  nav button { border: 0; background: transparent; padding: 8px 14px; border-radius: 999px; cursor: pointer; color: var(--muted); font-weight: 600; white-space: nowrap; }
+  nav button:hover { background: var(--sand); color: var(--espresso); }
+  nav button.on { background: var(--mocha); color: var(--cream); }
+  .who { display: flex; align-items: center; gap: 10px; flex: none; }
+  .pill { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.ok { background: var(--sage-soft); color: var(--sage); }
+  .pill.off { background: var(--amber-soft); color: var(--amber); }
+  .who a { font-size: 13px; text-decoration: none; color: var(--muted); }
+  .who a:hover { color: var(--espresso); }
+
+  main { max-width: 1120px; margin: 0 auto; padding: 22px 16px 80px; }
+  .page { display: none; }
+  .page.on { display: block; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .head h2 { font-size: 32px; line-height: 1.1; }
+  .head p { margin: 4px 0 0; color: var(--muted); }
+
+  /* ---------- building blocks ---------- */
+  .card { background: var(--paper); border: 1px solid var(--sand); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .card h3 { font-size: 22px; margin-bottom: 2px; }
+  .card .sub { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+  .grid { display: grid; gap: 16px; }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g2-wide { grid-template-columns: 1.4fr 1fr; align-items: start; }
+  .form2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat { background: var(--paper); border: 1px solid var(--sand); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); }
+  .stat .n { font-family: var(--serif); font-size: 38px; font-weight: 700; line-height: 1; color: var(--mocha-dark); }
+  .stat .l { color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+  label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .4px; text-transform: uppercase; margin: 0 0 5px; }
+  input, select, textarea { width: 100%; background: #fffdf9; border: 1px solid var(--sand-2); border-radius: 10px; padding: 10px 12px; outline: none; }
+  input:focus, select:focus, textarea:focus { border-color: var(--mocha); box-shadow: 0 0 0 3px rgba(122,90,67,.15); }
+  textarea { resize: vertical; }
+  .field { margin-bottom: 12px; }
+
+  .btn { border: 1px solid transparent; background: var(--mocha); color: var(--cream); padding: 10px 18px; border-radius: 999px; font-weight: 600; cursor: pointer; }
+  .btn:hover { background: var(--mocha-dark); }
+  .btn:disabled { opacity: .55; cursor: not-allowed; }
+  .btn.alt { background: transparent; color: var(--mocha); border-color: var(--latte); }
+  .btn.alt:hover { background: var(--sand); }
+  .btn.sm { padding: 5px 12px; font-size: 13px; }
+  .btn.warn { background: transparent; color: var(--danger); border-color: #e1b3ad; }
+  .btn.warn:hover { background: var(--danger-soft); }
+  .btn.good { background: var(--sage); }
+  .btn.good:hover { background: #4d6c52; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .msg { font-size: 13px; margin-top: 10px; white-space: pre-wrap; word-break: break-word; }
+  .msg.ok { color: var(--sage); } .msg.bad { color: var(--danger); }
+  .hint { font-size: 13px; color: var(--muted); }
+  .note { background: var(--amber-soft); border: 1px solid #ecd49c; color: #7b5513; border-radius: 12px; padding: 10px 14px; font-size: 13px; }
+  .empty { text-align: center; color: var(--muted); padding: 28px 12px; }
+
+  .chip { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .chip.confirmed { background: var(--sage-soft); color: var(--sage); }
+  .chip.completed { background: var(--sand); color: var(--mocha); }
+  .chip.cancelled { background: var(--danger-soft); color: var(--danger); }
+  .chip.no_show { background: var(--amber-soft); color: var(--amber); }
+
+  /* tables (turn into cards on phones) */
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); padding: 8px 10px; border-bottom: 1px solid var(--sand); }
+  td { padding: 12px 10px; border-bottom: 1px solid var(--sand); vertical-align: middle; }
+  tr:last-child td { border-bottom: 0; }
+  td .who2 { font-weight: 600; }
+  td .sub2 { color: var(--muted); font-size: 12px; }
+
+  /* today list */
+  .slot { display: flex; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--sand); }
+  .slot:last-child { border-bottom: 0; }
+  .slot .t { width: 96px; white-space: nowrap; font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--mocha-dark); flex: none; }
+  .slot .d { flex: 1; min-width: 0; }
+  .slot .d b { display: block; }
+  .slot .d span { color: var(--muted); font-size: 13px; }
+
+  .check { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px dashed var(--sand-2); font-size: 14px; }
+  .check:last-child { border-bottom: 0; }
+  .check i { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 13px; flex: none; }
+  .check i.y { background: var(--sage); color: #fff; }
+  .check i.n { background: var(--sand); color: var(--muted); }
+  .check a { margin-left: auto; font-size: 13px; }
+
+  .hours { display: grid; grid-template-columns: 92px 1fr 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .hours span { font-size: 14px; color: var(--muted); font-weight: 600; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .tag { background: var(--sand); border-radius: 999px; padding: 3px 10px; font-size: 13px; }
+  .tag a { color: var(--danger); text-decoration: none; margin-left: 6px; font-weight: 700; }
+  .times { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
+  .times button { border: 1px solid var(--latte); background: var(--paper); border-radius: 999px; padding: 6px 12px; cursor: pointer; font-weight: 600; color: var(--mocha); }
+  .times button.on { background: var(--mocha); color: var(--cream); border-color: var(--mocha); }
+
+  .svc { display: grid; grid-template-columns: 1.1fr 1.6fr .7fr .6fr 1.8fr 1.2fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
+  .svc.h { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; }
+
+  pre.out { background: #fffdf9; border: 1px solid var(--sand); border-radius: 10px; padding: 10px 12px; font: 13px/1.6 var(--sans); white-space: pre-wrap; margin: 10px 0 0; }
+
+  /* modal */
+  .shade { position: fixed; inset: 0; background: rgba(58,44,36,.45); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50; overflow-y: auto; }
+  .shade.on { display: flex; }
+  .modal { background: var(--paper); border-radius: 20px; width: 100%; max-width: 520px; padding: 24px; box-shadow: 0 20px 60px rgba(58,44,36,.3); max-height: 94vh; overflow-y: auto; }
+  .modal h3 { font-size: 26px; margin-bottom: 14px; }
+
+  #toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px); background: var(--espresso); color: var(--cream); padding: 10px 18px; border-radius: 999px; opacity: 0; pointer-events: none; transition: .25s; z-index: 80; max-width: 90vw; font-size: 14px; }
+  #toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #loading { position: fixed; inset: 0; background: var(--cream); display: grid; place-items: center; z-index: 90; font-family: var(--serif); font-size: 28px; color: var(--mocha); }
+
+  @media (max-width: 880px) {
+    .g4 { grid-template-columns: 1fr 1fr; }
+    .g2, .g2-wide { grid-template-columns: 1fr; }
+    .bar { flex-wrap: wrap; gap: 10px; }
+    nav { order: 3; width: 100%; margin-left: 0; }
+    .who { margin-left: auto; }
+    .svc { grid-template-columns: 1fr 1fr; padding: 12px; background: #fffdf9; border: 1px solid var(--sand); border-radius: 12px; }
+    .svc.h { display: none; }
+  }
+  @media (max-width: 640px) {
+    .form2 { grid-template-columns: 1fr; }
+    .head h2 { font-size: 28px; }
+    table.stack thead { display: none; }
+    table.stack, table.stack tbody, table.stack tr, table.stack td { display: block; width: 100%; }
+    table.stack tr { background: #fffdf9; border: 1px solid var(--sand); border-radius: 12px; padding: 10px 12px; margin-bottom: 10px; }
+    table.stack td { border: 0; padding: 4px 0; display: flex; justify-content: space-between; gap: 12px; text-align: right; }
+    table.stack td::before { content: attr(data-l); color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .4px; text-align: left; flex: none; }
+    .who span.hide-s { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="loading">Loading your salon…</div>
+
+<header>
+  <div class="bar">
+    <div class="brand">
+      <div class="logo" id="logo">S</div>
+      <div style="min-width:0;">
+        <h1 id="brand-name">Your Salon</h1>
+        <small>Appointments dashboard</small>
+      </div>
+    </div>
+    <nav id="nav">
+      <button data-tab="overview" class="on">Overview</button>
+      <button data-tab="appointments">Appointments</button>
+      <button data-tab="services">Services</button>
+      <button data-tab="customers">Customers</button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+    <div class="who">
+      <span id="wa-pill" class="pill off">WhatsApp: …</span>
+      <span id="admin-tag" class="pill" style="background:var(--rose-soft);color:#8a4b43;display:none;">Admin view</span>
+      <a href="/account.html" class="hide-s"><span class="hide-s">My account</span></a>
+      <a href="/api/auth/logout">Log out</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ================= OVERVIEW ================= -->
+  <section class="page on" id="p-overview">
+    <div class="head">
+      <div>
+        <h2 id="hello">Hello</h2>
+        <p id="today-line"></p>
+      </div>
+      <button class="btn" onclick="openBooking()">+ New booking</button>
+    </div>
+
+    <div class="grid g4" style="margin-bottom:16px;">
+      <div class="stat"><div class="n" id="s-today">–</div><div class="l">Appointments today</div></div>
+      <div class="stat"><div class="n" id="s-next7">–</div><div class="l">Next 7 days</div></div>
+      <div class="stat"><div class="n" id="s-month">–</div><div class="l">Bookings this month</div></div>
+      <div class="stat"><div class="n" id="s-value">–</div><div class="l">Booked value this month</div></div>
+    </div>
+
+    <div class="grid g2-wide">
+      <div class="card">
+        <h3>Today's schedule</h3>
+        <p class="sub">Everyone booked for today, in time order.</p>
+        <div id="today-list"><div class="empty">Loading…</div></div>
+      </div>
+
+      <div>
+        <div class="card" id="setup-card">
+          <h3>Setup checklist</h3>
+          <p class="sub">Finish these so customers can book on WhatsApp.</p>
+          <div id="checklist"></div>
+        </div>
+        <div class="card">
+          <h3>How customers book</h3>
+          <p class="hint" style="margin:6px 0 0;">
+            Customers message your WhatsApp number, send <b>Hi</b> and choose <b>Book appointment</b>. They pick a service, a day and a time, and the booking appears here and in your Google Calendar. You get a reminder message sent to them 24 hours and 2 hours before.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= APPOINTMENTS ================= -->
+  <section class="page" id="p-appointments">
+    <div class="head">
+      <div><h2>Appointments</h2><p>Bookings made on WhatsApp and by you.</p></div>
+      <div class="row">
+        <button class="btn alt sm" id="ap-up" onclick="loadAppointments('upcoming')">Upcoming</button>
+        <button class="btn alt sm" id="ap-past" onclick="loadAppointments('past')">Past</button>
+        <button class="btn" onclick="openBooking()">+ New booking</button>
+      </div>
+    </div>
+    <div class="card" style="padding:8px 14px;">
+      <table class="stack">
+        <thead><tr><th>#</th><th>Customer</th><th>Service</th><th>When</th><th>Price</th><th>Status</th><th></th></tr></thead>
+        <tbody id="ap-body"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="msg" id="ap-msg"></p>
+  </section>
+
+  <!-- ================= SERVICES ================= -->
+  <section class="page" id="p-services">
+    <div class="head">
+      <div><h2>Services &amp; prices</h2><p>What customers see on WhatsApp. Tags help the bot recommend (for example <i>bridal glow facial</i>).</p></div>
+      <div class="row">
+        <button class="btn alt" onclick="addSample()">Add sample services</button>
+        <button class="btn alt" onclick="addServiceRow()">+ Add service</button>
+        <button class="btn" onclick="saveServices()">Save services</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="svc h"><span>Category</span><span>Name</span><span>Price ₹</span><span>Minutes</span><span>Description</span><span>Tags</span><span></span></div>
+      <div id="svc-rows"></div>
+      <p class="msg" id="svc-msg"></p>
+    </div>
+  </section>
+
+  <!-- ================= CUSTOMERS ================= -->
+  <section class="page" id="p-customers">
+    <div class="head">
+      <div><h2>Customers</h2><p>Everyone who has booked with you.</p></div>
+      <input id="cu-search" placeholder="Search name or phone" style="max-width:260px;" oninput="renderCustomers()">
+    </div>
+    <div class="card" style="padding:8px 14px;">
+      <table class="stack">
+        <thead><tr><th>Customer</th><th>Bookings</th><th>Last visit</th><th>Next visit</th><th>Spent</th><th></th></tr></thead>
+        <tbody id="cu-body"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= SETTINGS ================= -->
+  <section class="page" id="p-settings">
+    <div class="head">
+      <div><h2>Salon setup</h2><p>Everything about your salon: details, hours, calendar and WhatsApp number.</p></div>
+    </div>
+
+    <div class="card">
+      <h3>Salon details</h3>
+      <p class="sub">Shown to customers and used by the WhatsApp assistant.</p>
+      <div class="form2">
+        <div class="field"><label>Salon name *</label><input id="st-name" placeholder="Pretty Looks Parlour"></div>
+        <div class="field"><label>Your WhatsApp (gets booking alerts)</label><input id="st-owner" placeholder="919876543210"></div>
+        <div class="field"><label>Address</label><input id="st-address" placeholder="Shop 4, Main Road, Hyderabad"></div>
+        <div class="field"><label>Chairs / staff working at once</label><input id="st-cap" type="number" min="1" max="50" value="1"></div>
+        <div class="field"><label>A booking slot every (minutes)</label><input id="st-slot" type="number" min="10" max="240" value="30"></div>
+      </div>
+
+      <h3 style="margin-top:12px;">Opening hours</h3>
+      <p class="sub">Use 24-hour times like 10:00 and 20:00. Leave both empty on days you are closed.</p>
+      <div id="hours"></div>
+
+      <h3 style="margin-top:12px;">Google Calendar</h3>
+      <p class="sub" id="cal-help"></p>
+      <div class="field"><label>Calendar ID</label><input id="st-cal" placeholder="your@gmail.com or xxxx@group.calendar.google.com"></div>
+
+      <div class="row" style="margin-top:6px;">
+        <button class="btn" id="st-save" onclick="saveSettings()">Save</button>
+      </div>
+      <p class="msg" id="st-msg"></p>
+    </div>
+
+    <div class="card">
+      <h3>Closed days</h3>
+      <p class="sub">Holidays and days off. Customers cannot book these dates.</p>
+      <div class="row">
+        <input type="date" id="hol-day" style="max-width:200px;">
+        <button class="btn alt" onclick="addHoliday()">Mark closed</button>
+      </div>
+      <div class="tags" id="hol-list"></div>
+      <p class="msg" id="hol-msg"></p>
+    </div>
+
+    <div class="card">
+      <h3>WhatsApp number</h3>
+      <p class="sub" id="wa-sub">The number your customers message to book.</p>
+      <div id="wa-status" style="margin-bottom:12px;"></div>
+
+      <div class="form2">
+        <div class="field"><label>Phone number ID</label><input id="wa-pid"></div>
+        <div class="field"><label>WhatsApp Business Account ID</label><input id="wa-waba"></div>
+        <div class="field"><label>Display phone (optional)</label><input id="wa-disp" placeholder="+91 98765 43210"></div>
+        <div class="field"><label>Access token</label><input id="wa-token" type="password" autocomplete="off"></div>
+      </div>
+      <p class="hint">From Meta → WhatsApp → API Setup. Use a permanent System User token. It is stored encrypted. If you are unsure, ask the platform owner to connect it for you.</p>
+      <div class="row" style="margin-top:10px;">
+        <button class="btn" onclick="connectWa()">Connect number</button>
+        <button class="btn alt" onclick="checkWa()">Check connection</button>
+      </div>
+      <pre class="out" id="wa-out" style="display:none;"></pre>
+    </div>
+  </section>
+</main>
+
+<!-- ================= BOOKING MODAL ================= -->
+<div class="shade" id="bk-shade" onclick="if(event.target===this)closeBooking()">
+  <div class="modal">
+    <h3>New booking</h3>
+    <div class="form2">
+      <div class="field"><label>Service</label><select id="bk-service"></select></div>
+      <div class="field"><label>Date</label><input id="bk-day" type="date"></div>
+    </div>
+    <button class="btn alt sm" onclick="findSlots()">Show free times</button>
+    <div class="times" id="bk-times"></div>
+    <div class="form2">
+      <div class="field"><label>Customer name</label><input id="bk-name"></div>
+      <div class="field"><label>Customer phone</label><input id="bk-phone" placeholder="919876543210"></div>
+    </div>
+    <label style="display:flex;align-items:center;gap:8px;text-transform:none;letter-spacing:0;font-size:13px;font-weight:500;">
+      <input type="checkbox" id="bk-notify" checked style="width:auto;"> Send the confirmation on WhatsApp
+    </label>
+    <div class="row" style="margin-top:14px;">
+      <button class="btn" onclick="book()">Book now</button>
+      <button class="btn alt" onclick="closeBooking()">Close</button>
+    </div>
+    <p class="msg" id="bk-msg"></p>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  const API = '/api/salon-app';
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const TZ = 'Asia/Kolkata';
+  const SAMPLE = [
+    ['Hair', 'Haircut (Women)', 400, 45, 'Wash, cut and blow-dry', 'hair cut style'],
+    ['Hair', 'Hair Spa', 900, 60, 'Deep conditioning spa', 'hair spa relax'],
+    ['Skin', 'Fruit Facial', 700, 60, 'Glow facial for all skin types', 'facial skin glow'],
+    ['Skin', 'D-Tan Cleanup', 500, 40, 'Removes tan and dullness', 'skin detan cleanup glow'],
+    ['Waxing', 'Full Arms Wax', 300, 30, 'Rica wax', 'wax removal'],
+    ['Hands & Feet', 'Manicure + Pedicure', 800, 75, 'Spa manicure and pedicure', 'nail manicure pedicure hands'],
+    ['Bridal', 'Bridal Makeup', 12000, 120, 'HD bridal makeup with hairstyle', 'bridal makeup wedding party']
+  ];
+
+  // Admin can open /salon?store_id=... to see a parlour exactly as its owner does
+  const adminStore = new URLSearchParams(location.search).get('store_id') || '';
+
+  let state = { exists: false, store: {}, hours: {}, services: [], holidays: [], whatsapp: { connected: false } };
+  let serviceAccount = null;
+  let isAdmin = false;
+  let apWhen = 'upcoming';
+  let customers = [];
+  let chosenTime = '';
+  let tab = 'overview';
+  let ownerName = '';
+
+  const $ = id => document.getElementById(id);
+  const val = id => ($(id).value || '').trim();
+
+  const esc = v => String(v ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+
+  const rupees = n => '₹' + Number(n || 0).toLocaleString('en-IN');
+  const dt = v => new Date(v).toLocaleString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', hour12: true, timeZone: TZ });
+  const dOnly = v => (v ? new Date(v).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: TZ }) : '–');
+  const tOnly = v => new Date(v).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: TZ }).toUpperCase();
+
+  function toast(text) {
+    const t = $('toast');
+    t.textContent = text;
+    t.classList.add('on');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => t.classList.remove('on'), 3200);
+  }
+
+  function say(id, text, ok) {
+    const el = $(id);
+    el.className = 'msg ' + (ok ? 'ok' : 'bad');
+    el.textContent = text || '';
+  }
+
+  async function api(path, method = 'GET', body) {
+    const sep = path.includes('?') ? '&' : '?';
+    const url = API + path + (adminStore ? `${sep}store_id=${encodeURIComponent(adminStore)}` : '');
+
+    const res = await fetch(url, {
+      method,
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: body ? JSON.stringify({ ...body, ...(adminStore ? { store_id: adminStore } : {}) }) : undefined
+    });
+
+    if (res.status === 401) { location.href = '/login.html'; throw new Error('Please log in again'); }
+
+    let data;
+    try { data = await res.json(); } catch { throw new Error(`Server did not answer correctly (HTTP ${res.status}). Restart the server.`); }
+
+    if (!res.ok || data.success === false) throw new Error(data.message || data.error || `HTTP ${res.status}`);
+    return data;
+  }
+
+  /* ---------------- tabs ---------------- */
+
+  function show(name) {
+    tab = name;
+    document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === name));
+    document.querySelectorAll('.page').forEach(p => p.classList.toggle('on', p.id === 'p-' + name));
+    history.replaceState(null, '', location.pathname + location.search + '#' + name);
+    window.scrollTo({ top: 0 });
+
+    if (name === 'overview') loadOverview();
+    if (name === 'appointments') loadAppointments(apWhen);
+    if (name === 'customers') loadCustomers();
+  }
+
+  $('nav').addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b) show(b.dataset.tab);
+  });
+
+  /* ---------------- state ---------------- */
+
+  async function loadState() {
+    const s = await api('/state');
+
+    isAdmin = Boolean(s.is_admin);
+    serviceAccount = s.service_account_email || null;
+
+    state = s.exists ? s : { exists: false, store: {}, hours: {}, services: [], holidays: [], whatsapp: { connected: false } };
+
+    const name = state.store.name || ownerName || 'Your Salon';
+    $('brand-name').textContent = name;
+    $('logo').textContent = (name.trim()[0] || 'S').toUpperCase();
+    document.title = name + ' · Dashboard';
+    $('admin-tag').style.display = isAdmin ? '' : 'none';
+
+    const wa = $('wa-pill');
+    wa.className = 'pill ' + (state.whatsapp.connected ? 'ok' : 'off');
+    wa.textContent = state.whatsapp.connected ? 'WhatsApp connected' : 'WhatsApp not connected';
+
+    fillSettings();
+    renderServiceRows();
+    renderChecklist();
+  }
+
+  /* ---------------- overview ---------------- */
+
+  async function loadOverview() {
+    const h = new Date().toLocaleString('en-IN', { hour: 'numeric', hour12: false, timeZone: TZ });
+    const greet = Number(h) < 12 ? 'Good morning' : Number(h) < 17 ? 'Good afternoon' : 'Good evening';
+    $('hello').textContent = `${greet}${state.store.name ? ', ' + state.store.name : ''}`;
+    $('today-line').textContent = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', timeZone: TZ });
+
+    if (!state.exists) {
+      ['s-today', 's-next7', 's-month', 's-value'].forEach(id => ($(id).textContent = '–'));
+      $('today-list').innerHTML = '<div class="empty">Your salon is not set up yet.<br><br><button class="btn" onclick="show(\'settings\')">Set up my salon</button></div>';
+      return;
+    }
+
+    try {
+      const { stats } = await api('/stats');
+
+      $('s-today').textContent = stats.today;
+      $('s-next7').textContent = stats.next7;
+      $('s-month').textContent = stats.month_bookings;
+      $('s-value').textContent = rupees(stats.month_value);
+
+      $('today-list').innerHTML = stats.schedule.length
+        ? stats.schedule.map(a => `
+            <div class="slot">
+              <div class="t">${esc(tOnly(a.start_at))}</div>
+              <div class="d"><b>${esc(a.customer_name)}</b><span>${esc(a.service)} · +${esc(a.customer_phone)}</span></div>
+              <span class="chip ${esc(a.status)}">${esc(label(a.status))}</span>
+            </div>`).join('')
+        : '<div class="empty">Nothing booked for today yet. ☕</div>';
+    } catch (error) {
+      $('today-list').innerHTML = `<div class="empty" style="color:var(--danger)">${esc(error.message)}</div>`;
+    }
+  }
+
+  const label = s => ({ confirmed: 'Confirmed', completed: 'Completed', cancelled: 'Cancelled', no_show: 'No-show' }[s] || s);
+
+  function renderChecklist() {
+    const s = state.store || {};
+    const openDays = Object.values(state.hours || {}).filter(Boolean).length;
+
+    const items = [
+      [state.exists, 'Salon details saved', 'settings'],
+      [(state.services || []).length > 0, 'Services and prices added', 'services'],
+      [openDays > 0, 'Opening hours set', 'settings'],
+      [Boolean(s.calendar_id), 'Google Calendar linked (bookings show on your phone)', 'settings'],
+      [state.whatsapp.connected, 'WhatsApp number connected', 'settings']
+    ];
+
+    $('checklist').innerHTML = items
+      .map(([ok, text, go]) => `<div class="check"><i class="${ok ? 'y' : 'n'}">${ok ? '✓' : '•'}</i><span>${esc(text)}</span>${ok ? '' : `<a href="#" onclick="show('${go}');return false;">Do this</a>`}</div>`)
+      .join('');
+
+    $('setup-card').style.display = items.every(i => i[0]) ? 'none' : '';
+  }
+
+  /* ---------------- appointments ---------------- */
+
+  async function loadAppointments(which) {
+    apWhen = which === 'past' ? 'past' : 'upcoming';
+    $('ap-up').style.background = apWhen === 'upcoming' ? 'var(--sand)' : '';
+    $('ap-past').style.background = apWhen === 'past' ? 'var(--sand)' : '';
+
+    const body = $('ap-body');
+
+    if (!state.exists) {
+      body.innerHTML = '<tr><td colspan="7" class="empty">Set up your salon first (Settings).</td></tr>';
+      return;
+    }
+
+    try {
+      const { appointments } = await api(`/appointments?when=${apWhen}`);
+
+      body.innerHTML = appointments.length
+        ? appointments.map(a => {
+            const future = new Date(a.start_at).getTime() > Date.now();
+            const actions = [];
+
+            if (a.status === 'confirmed' && future) actions.push(`<button class="btn warn sm" onclick="cancelAppt(${Number(a.id)})">Cancel</button>`);
+            if (a.status === 'confirmed' && !future) {
+              actions.push(`<button class="btn good sm" onclick="markAppt(${Number(a.id)},'completed')">Done</button>`);
+              actions.push(`<button class="btn alt sm" onclick="markAppt(${Number(a.id)},'no_show')">No-show</button>`);
+            }
+
+            return `<tr>
+              <td data-l="#">${esc(a.id)}</td>
+              <td data-l="Customer"><div><div class="who2">${esc(a.customer_name)}</div><div class="sub2">+${esc(a.customer_phone)}</div></div></td>
+              <td data-l="Service">${esc(a.service)}</td>
+              <td data-l="When">${esc(dt(a.start_at))}</td>
+              <td data-l="Price">${esc(rupees(a.price))}</td>
+              <td data-l="Status"><span class="chip ${esc(a.status)}">${esc(label(a.status))}</span></td>
+              <td data-l=""><div class="row" style="justify-content:flex-end;">${actions.join('')}</div></td>
+            </tr>`;
+          }).join('')
+        : `<tr><td colspan="7" class="empty">No ${apWhen} appointments.</td></tr>`;
+    } catch (error) {
+      body.innerHTML = `<tr><td colspan="7" class="empty" style="color:var(--danger)">${esc(error.message)}</td></tr>`;
+    }
+  }
+
+  async function cancelAppt(id) {
+    if (!confirm(`Cancel booking #${id}? The customer is told on WhatsApp and it is removed from your calendar.`)) return;
+
+    try {
+      await api(`/appointments/${id}/cancel`, 'POST', {});
+      toast(`Booking #${id} cancelled`);
+    } catch (error) {
+      say('ap-msg', error.message, false);
+    }
+
+    loadAppointments(apWhen);
+  }
+
+  async function markAppt(id, status) {
+    try {
+      await api(`/appointments/${id}/status`, 'POST', { status });
+      toast(status === 'completed' ? 'Marked as done' : 'Marked as no-show');
+    } catch (error) {
+      say('ap-msg', error.message, false);
+    }
+
+    loadAppointments(apWhen);
+  }
+
+  /* ---------------- booking modal ---------------- */
+
+  function openBooking() {
+    if (!state.exists || !(state.services || []).length) {
+      toast('Add your services first');
+      show(state.exists ? 'services' : 'settings');
+      return;
+    }
+
+    $('bk-service').innerHTML = state.services
+      .map(s => `<option value="${esc(s.id)}">${esc(s.name)} · ${esc(rupees(s.price))} · ${esc(s.duration_min)} min</option>`)
+      .join('');
+
+    $('bk-day').value = new Date().toLocaleDateString('en-CA', { timeZone: TZ });
+    $('bk-times').innerHTML = '';
+    $('bk-msg').textContent = '';
+    chosenTime = '';
+    $('bk-shade').classList.add('on');
+  }
+
+  function closeBooking() { $('bk-shade').classList.remove('on'); }
+
+  async function findSlots() {
+    chosenTime = '';
+    $('bk-times').innerHTML = '';
+
+    try {
+      const { slots } = await api(`/slots?service_id=${encodeURIComponent(val('bk-service'))}&day=${encodeURIComponent(val('bk-day'))}`);
+
+      if (!slots.length) return say('bk-msg', 'No free times that day. Try another date.', false);
+
+      say('bk-msg', 'Tap a time:', true);
+      $('bk-times').innerHTML = slots.map(s => `<button type="button" data-t="${esc(s.time)}" onclick="pickTime('${esc(s.time)}')">${esc(s.label)}</button>`).join('');
+    } catch (error) {
+      say('bk-msg', error.message, false);
+    }
+  }
+
+  function pickTime(t) {
+    chosenTime = t;
+    document.querySelectorAll('#bk-times button').forEach(b => b.classList.toggle('on', b.dataset.t === t));
+  }
+
+  async function book() {
+    try {
+      if (!chosenTime) throw new Error('Press "Show free times" and tap a time first');
+
+      const out = await api('/book', 'POST', {
+        service_id: Number(val('bk-service')),
+        day: val('bk-day'),
+        time: chosenTime,
+        name: val('bk-name'),
+        phone: val('bk-phone'),
+        notify: $('bk-notify').checked
+      });
+
+      closeBooking();
+      $('bk-name').value = '';
+      $('bk-phone').value = '';
+
+      toast(
+        `Booked #${out.appointment.id}` +
+          (out.calendar ? ' · added to calendar' : '') +
+          ($('bk-notify').checked && !out.notified ? ' · WhatsApp not sent (customer has not messaged in 24h)' : '')
+      );
+
+      if (tab === 'overview') loadOverview();
+      if (tab === 'appointments') loadAppointments('upcoming');
+    } catch (error) {
+      say('bk-msg', error.message, false);
+    }
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBooking(); });
+
+  /* ---------------- services ---------------- */
+
+  function renderServiceRows() {
+    const rows = (state.services || []).map(s => [s.category, s.name, s.price, s.duration_min, s.description || '', s.tags || '']);
+    $('svc-rows').innerHTML = '';
+    rows.forEach(r => addServiceRow(r));
+    if (!rows.length) $('svc-rows').innerHTML = '<div class="empty" id="svc-empty">No services yet. Add your first one, or use sample services.</div>';
+  }
+
+  function addServiceRow(r) {
+    const row = Array.isArray(r) ? r : ['General', '', '', 30, '', ''];
+
+    $('svc-empty')?.remove();
+
+    const div = document.createElement('div');
+    div.className = 'svc';
+    div.innerHTML = `
+      <input data-k="category" value="${esc(row[0])}" placeholder="Category">
+      <input data-k="name" value="${esc(row[1])}" placeholder="Service name">
+      <input data-k="price" type="number" min="0" value="${esc(row[2])}" placeholder="Price">
+      <input data-k="duration_min" type="number" min="5" value="${esc(row[3])}" placeholder="Min">
+      <input data-k="description" value="${esc(row[4])}" placeholder="Short description">
+      <input data-k="tags" value="${esc(row[5])}" placeholder="tags">
+      <button class="btn warn sm" type="button" onclick="this.parentElement.remove()">✕</button>`;
+
+    $('svc-rows').appendChild(div);
+  }
+
+  function addSample() {
+    SAMPLE.forEach(r => addServiceRow(r));
+    say('svc-msg', 'Sample services added. Edit the prices, then press Save services.', true);
+  }
+
+  async function saveServices() {
+    try {
+      if (!state.exists) throw new Error('Save your salon details first (Settings)');
+
+      const services = [...document.querySelectorAll('#svc-rows .svc')]
+        .map(row => Object.fromEntries([...row.querySelectorAll('input')].map(i => [i.dataset.k, i.value.trim()])))
+        .filter(s => s.name || s.price);
+
+      if (!services.length) throw new Error('Add at least one service');
+
+      services.forEach((s, i) => {
+        if (!s.name) throw new Error(`Row ${i + 1}: service name is missing`);
+        if (s.price === '' || Number.isNaN(Number(s.price))) throw new Error(`"${s.name}": enter a price`);
+      });
+
+      await api('/save', 'POST', { ...currentDetails(), services });
+
+      say('svc-msg', 'Saved ✅ The WhatsApp assistant now uses these services.', true);
+      await loadState();
+    } catch (error) {
+      say('svc-msg', error.message, false);
+    }
+  }
+
+  /* ---------------- customers ---------------- */
+
+  async function loadCustomers() {
+    if (!state.exists) {
+      $('cu-body').innerHTML = '<tr><td colspan="6" class="empty">Set up your salon first (Settings).</td></tr>';
+      return;
+    }
+
+    try {
+      customers = (await api('/customers')).customers;
+      renderCustomers();
+    } catch (error) {
+      $('cu-body').innerHTML = `<tr><td colspan="6" class="empty" style="color:var(--danger)">${esc(error.message)}</td></tr>`;
+    }
+  }
+
+  function renderCustomers() {
+    const q = ($('cu-search').value || '').toLowerCase().trim();
+    const list = customers.filter(c => !q || String(c.name || '').toLowerCase().includes(q) || String(c.phone).includes(q));
+
+    $('cu-body').innerHTML = list.length
+      ? list.map(c => `<tr>
+          <td data-l="Customer"><div><div class="who2">${esc(c.name || 'Guest')}</div><div class="sub2">+${esc(c.phone)}</div></div></td>
+          <td data-l="Bookings">${esc(c.bookings)}</td>
+          <td data-l="Last visit">${esc(dOnly(c.last_visit))}</td>
+          <td data-l="Next visit">${esc(c.next_visit ? dt(c.next_visit) : '–')}</td>
+          <td data-l="Spent">${esc(rupees(c.spent))}</td>
+          <td data-l=""><a class="btn alt sm" style="text-decoration:none;" target="_blank" rel="noopener" href="https://wa.me/${esc(c.phone)}">Open chat</a></td>
+        </tr>`).join('')
+      : `<tr><td colspan="6" class="empty">${customers.length ? 'No match.' : 'No customers yet. They appear after the first booking.'}</td></tr>`;
+  }
+
+  /* ---------------- settings ---------------- */
+
+  function fillSettings() {
+    const s = state.store || {};
+
+    $('st-name').value = s.name || ownerName || '';
+    $('st-owner').value = s.owner_phone || '';
+    $('st-address').value = s.address || '';
+    $('st-cap').value = s.capacity || 1;
+    $('st-slot').value = s.slot_minutes || 30;
+    $('st-cal').value = s.calendar_id || '';
+    $('st-save').textContent = state.exists ? 'Save changes' : 'Create my salon';
+
+    $('hours').innerHTML = [1, 2, 3, 4, 5, 6, 0].map(d => {
+      const h = state.exists ? (state.hours || {})[d] : d === 0 ? null : ['10:00', '20:00'];
+      return `<div class="hours"><span>${DAYS[d]}</span>
+        <input id="ho${d}" placeholder="open" value="${esc(h ? h[0] : '')}">
+        <input id="hc${d}" placeholder="close" value="${esc(h ? h[1] : '')}"></div>`;
+    }).join('');
+
+    $('cal-help').innerHTML = serviceAccount
+      ? `To see bookings on your phone: open Google Calendar → your calendar → <b>Settings and sharing</b> → <b>Share with specific people</b> → add <b>${esc(serviceAccount)}</b> with <i>Make changes to events</i>. Then paste your Calendar ID below (for a personal calendar it is your Gmail address).`
+      : 'Google Calendar is not switched on for this platform yet. Bookings still work; they just will not appear in a calendar.';
+
+    $('hol-list').innerHTML = (state.holidays || []).length
+      ? state.holidays.map(d => `<span class="tag">${esc(d)}<a href="#" onclick="removeHoliday('${esc(d)}');return false;">✕</a></span>`).join('')
+      : '<span class="hint">No upcoming closed days.</span>';
+
+    const wa = state.whatsapp || { connected: false };
+    $('wa-status').innerHTML = wa.connected
+      ? `<span class="pill ok">Connected</span> &nbsp;<b>${esc(wa.display_phone || wa.phone_number_id)}</b> <span class="hint">(phone number ID ${esc(wa.phone_number_id)})</span>`
+      : `<span class="pill off">Not connected</span> &nbsp;<span class="hint">${state.exists ? 'Add your number below.' : 'Create your salon first, then connect a number.'}</span>`;
+    $('wa-pid').value = wa.connected ? wa.phone_number_id : '';
+    $('wa-token').value = '';
+  }
+
+  function currentDetails() {
+    const s = state.store || {};
+    return {
+      name: s.name, owner_phone: s.owner_phone, calendar_id: s.calendar_id, address: s.address,
+      capacity: s.capacity, slot_minutes: s.slot_minutes, hours: state.hours
+    };
+  }
+
+  async function saveSettings() {
+    try {
+      const hours = {};
+
+      for (let d = 0; d < 7; d++) {
+        const o = val('ho' + d), c = val('hc' + d);
+        hours[d] = o && c ? [o, c] : null;
+      }
+
+      await api('/save', 'POST', {
+        name: val('st-name'),
+        owner_phone: val('st-owner'),
+        address: val('st-address'),
+        capacity: Number(val('st-cap')) || 1,
+        slot_minutes: Number(val('st-slot')) || 30,
+        calendar_id: val('st-cal'),
+        hours,
+        services: []
+      });
+
+      say('st-msg', 'Saved ✅', true);
+      toast('Saved');
+      await loadState();
+    } catch (error) {
+      say('st-msg', error.message, false);
+    }
+  }
+
+  async function addHoliday() {
+    try {
+      await api('/holiday', 'POST', { day: val('hol-day') });
+      say('hol-msg', 'Marked closed ✅', true);
+      await loadState();
+    } catch (error) {
+      say('hol-msg', error.message, false);
+    }
+  }
+
+  async function removeHoliday(day) {
+    try {
+      await api(`/holiday/${encodeURIComponent(day)}`, 'DELETE');
+      await loadState();
+    } catch (error) {
+      say('hol-msg', error.message, false);
+    }
+  }
+
+  function out(text, ok) {
+    const el = $('wa-out');
+    el.style.display = '';
+    el.style.color = ok ? 'var(--sage)' : 'var(--danger)';
+    el.textContent = text;
+  }
+
+  async function connectWa() {
+    try {
+      const r = await api('/connect', 'POST', {
+        phone_number_id: val('wa-pid'),
+        waba_id: val('wa-waba'),
+        display_phone: val('wa-disp'),
+        access_token: val('wa-token')
+      });
+
+      out(`Connected ✅ ${r.display_phone || ''} ${r.verified_name ? '(' + r.verified_name + ')' : ''}\nNow press "Check connection", then send "Hi" to the number from your phone.`, true);
+      await loadState();
+    } catch (error) {
+      out(error.message, false);
+    }
+  }
+
+  async function checkWa() {
+    try {
+      const r = await api('/health');
+      out((r.all_ok ? 'ALL GOOD ✅\n' : 'PROBLEM ❌\n') + r.checks.map(c => `${c.ok ? '✅' : '❌'} ${c.name}${c.detail ? ' – ' + c.detail : ''}`).join('\n'), r.all_ok);
+    } catch (error) {
+      out(error.message, false);
+    }
+  }
+
+  Object.assign(window, {
+    show, openBooking, closeBooking, findSlots, pickTime, book,
+    loadAppointments, cancelAppt, markAppt,
+    addServiceRow, addSample, saveServices, renderCustomers,
+    saveSettings, addHoliday, removeHoliday, connectWa, checkWa
+  });
+
+  /* ---------------- start ---------------- */
+
+  (async function start() {
+    try {
+      try {
+        const me = await (await fetch('/api/auth/me', { credentials: 'same-origin' })).json();
+        ownerName = me?.store?.business_name || '';
+      } catch { /* optional */ }
+
+      await loadState();
+
+      const wanted = (location.hash || '').replace('#', '');
+      const first = !state.exists ? 'settings' : ['overview', 'appointments', 'services', 'customers', 'settings'].includes(wanted) ? wanted : 'overview';
+
+      show(first);
+    } catch (error) {
+      $('loading').innerHTML = `<div style="text-align:center;max-width:420px;padding:20px;font-size:18px;">${esc(error.message)}<br><br><a href="/salon" style="font-size:16px;">Try again</a></div>`;
+      return;
+    }
+
+    $('loading').remove();
+
+    // fresh numbers every minute while the page is open
+    setInterval(() => {
+      if (document.hidden) return;
+      if (tab === 'overview') loadOverview();
+      if (tab === 'appointments') loadAppointments(apWhen);
+    }, 60000);
+  })();
+})();
+</script>
+</body>
+</html>
